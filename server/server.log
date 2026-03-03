@@ -1,0 +1,23 @@
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node index.js`[39m
+[dotenv@17.3.1] injecting env (6) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+[dotenv@17.3.1] injecting env (0) from .env -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+Server running on port 3000
+[32m[nodemon] clean exit - waiting for chang[32m[nodemon] restarti[32m[nodemon] restarting [32m[nodemon] starting `node index.js`[39m
+[dotenv@17.3.1] injecting env (6) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+Server running on port 3000
+[32m[nodemon] clean exit - waiting forFetching preview for NCVG - 2026-1
+Fetching Jira data with JQL: project = "NCVG" AND statusCategory = Done AND resolved >= "2026-01-01" AND resolved <= "2026-01-31"
+Fetching preview for NCPG - 2026-1
+Fetching Jira data with JQL: project = "NCPG" AND statusCategory = Done AND resolved >= "2026-01-01" AND resolved <= "2026-01-31"
+Fetching preview for NCOR - 2026-1
+Fetching Jira data with JQL: project = "NCOR" AND statusCategory = Done AND resolved >= "2026-01-01" AND resolved <= "2026-01-31"
+Fetching preview for NCVG - 2026-1
+Fetching Jira data with JQL: project = "NCVG" AND statusCategory = Done AND resolved >= "2026-01-01" AND resolved <= "2026-01-31"
+Received export request with newProjects: []
