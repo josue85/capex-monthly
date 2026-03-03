@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-enova-dark: #28335a;
+  --color-enova-light: #428cbf;
+  --color-enova-bg: #f8f9fa;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-enova-bg);
+}

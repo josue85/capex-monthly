@@ -1,0 +1,1761 @@
+[dotenv@17.3.1] injecting env (4) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+
+--- Custom Fields for NCOR-10040 ---
+
+Field Name: Status Category Changed
+Field ID: statuscategorychangedate
+Value: "2026-02-19T10:04:54.794-0600"
+
+Field Name: Parent
+Field ID: parent
+Value: {
+  "id": "162860",
+  "key": "NCOR-10016",
+  "self": "https://enovaagile.atlassian.net/rest/api/3/issue/162860",
+  "fields": {
+    "summary": "Smart Bidding",
+    "status": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/status/10014",
+      "description": "",
+      "iconUrl": "https://enovaagile.atlassian.net/images/icons/statuses/generic.png",
+      "name": "Conception",
+      "id": "10014",
+      "statusCategory": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/statuscategory/2",
+        "id": 2,
+        "key": "new",
+        "colorName": "blue-gray",
+        "name": "To Do"
+      }
+    },
+    "priority": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/priority/4",
+      "iconUrl": "https://enovaagile.atlassian.net/images/icons/priorities/low_new.svg",
+      "name": "Low",
+      "id": "4"
+    },
+    "issuetype": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issuetype/10000",
+      "id": "10000",
+      "description": "A big user story that needs to be broken down. Created by Jira Software - do not edit or delete.",
+      "iconUrl": "https://enovaagile.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10322?size=medium",
+      "name": "Epic",
+      "subtask": false,
+      "avatarId": 10322,
+      "hierarchyLevel": 1
+    }
+  }
+}
+
+Field Name: Fix versions
+Field ID: fixVersions
+Value: []
+
+Field Name: Status Category
+Field ID: statusCategory
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/statuscategory/4",
+  "id": 4,
+  "key": "indeterminate",
+  "colorName": "yellow",
+  "name": "In Progress"
+}
+
+Field Name: Last Viewed
+Field ID: lastViewed
+Value: "2026-03-02T22:57:05.092-0600"
+
+Field Name: Priority
+Field ID: priority
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/priority/4",
+  "iconUrl": "https://enovaagile.atlassian.net/images/icons/priorities/low_new.svg",
+  "name": "Low",
+  "id": "4"
+}
+
+Field Name: Labels
+Field ID: labels
+Value: [
+  "approved_for_release",
+  "qa_complete"
+]
+
+Field Name: Request participants
+Field ID: customfield_10218
+Value: []
+
+Field Name: Affects versions
+Field ID: versions
+Value: []
+
+Field Name: Linked Issues
+Field ID: issuelinks
+Value: [
+  {
+    "id": "91947",
+    "self": "https://enovaagile.atlassian.net/rest/api/3/issueLink/91947",
+    "type": {
+      "id": "10000",
+      "name": "Blocks",
+      "inward": "is blocked by",
+      "outward": "blocks",
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issueLinkType/10000"
+    },
+    "outwardIssue": {
+      "id": "165300",
+      "key": "NCOR-10041",
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165300",
+      "fields": {
+        "summary": "[BLOCKED BY RELEASE OF 10040] M3: Store bid responses in bid_response table",
+        "status": {
+          "self": "https://enovaagile.atlassian.net/rest/api/3/status/10007",
+          "description": "",
+          "iconUrl": "https://enovaagile.atlassian.net/images/icons/statuses/generic.png",
+          "name": "In Review",
+          "id": "10007",
+          "statusCategory": {
+            "self": "https://enovaagile.atlassian.net/rest/api/3/statuscategory/4",
+            "id": 4,
+            "key": "indeterminate",
+            "colorName": "yellow",
+            "name": "In Progress"
+          }
+        },
+        "priority": {
+          "self": "https://enovaagile.atlassian.net/rest/api/3/priority/4",
+          "iconUrl": "https://enovaagile.atlassian.net/images/icons/priorities/low_new.svg",
+          "name": "Low",
+          "id": "4"
+        },
+        "issuetype": {
+          "self": "https://enovaagile.atlassian.net/rest/api/3/issuetype/10004",
+          "id": "10004",
+          "description": "Stories track functionality or features expressed as user goals.",
+          "iconUrl": "https://enovaagile.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium",
+          "name": "Story",
+          "subtask": false,
+          "avatarId": 10315,
+          "hierarchyLevel": 0
+        }
+      }
+    }
+  }
+]
+
+Field Name: Assignee
+Field ID: assignee
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=712020%3A975587dd-53d3-444b-a69b-c983d1ca8b09",
+  "accountId": "712020:975587dd-53d3-444b-a69b-c983d1ca8b09",
+  "emailAddress": "qduvall@enova.com",
+  "avatarUrls": {
+    "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/48",
+    "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/24",
+    "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/16",
+    "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/32"
+  },
+  "displayName": "Qwill Duvall",
+  "active": true,
+  "timeZone": "America/Chicago",
+  "accountType": "atlassian"
+}
+
+Field Name: Status
+Field ID: status
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/status/10009",
+  "description": "",
+  "iconUrl": "https://enovaagile.atlassian.net/images/icons/statuses/generic.png",
+  "name": "Accepted",
+  "id": "10009",
+  "statusCategory": {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/statuscategory/4",
+    "id": 4,
+    "key": "indeterminate",
+    "colorName": "yellow",
+    "name": "In Progress"
+  }
+}
+
+Field Name: Components
+Field ID: components
+Value: []
+
+Field Name: Creator
+Field ID: creator
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+  "accountId": "63e17f31bf837c6893daa80b",
+  "emailAddress": "asolomon@enova.com",
+  "avatarUrls": {
+    "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+  },
+  "displayName": "Alex Solomon",
+  "active": true,
+  "timeZone": "America/Chicago",
+  "accountType": "atlassian"
+}
+
+Field Name: Sub-tasks
+Field ID: subtasks
+Value: []
+
+Field Name: Code Reviewer
+Field ID: customfield_10040
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+  "accountId": "5c37752ad650366f53171bb5",
+  "emailAddress": "clazatin@enova.com",
+  "avatarUrls": {
+    "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+    "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+    "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+    "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+  },
+  "displayName": "Cathy Lazatin",
+  "active": true,
+  "timeZone": "America/Chicago",
+  "accountType": "atlassian"
+}
+
+Field Name: Release Readiness Checklist
+Field ID: customfield_10041
+Value: "https://retool.enova.com/app/release_readiness_checklist?ticket_number=NCOR-10040"
+
+Field Name: Test Engineer
+Field ID: customfield_10042
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+  "accountId": "5c37752ad650366f53171bb5",
+  "emailAddress": "clazatin@enova.com",
+  "avatarUrls": {
+    "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+    "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+    "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+    "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+  },
+  "displayName": "Cathy Lazatin",
+  "active": true,
+  "timeZone": "America/Chicago",
+  "accountType": "atlassian"
+}
+
+Field Name: Reporter
+Field ID: reporter
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+  "accountId": "63e17f31bf837c6893daa80b",
+  "emailAddress": "asolomon@enova.com",
+  "avatarUrls": {
+    "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+  },
+  "displayName": "Alex Solomon",
+  "active": true,
+  "timeZone": "America/Chicago",
+  "accountType": "atlassian"
+}
+
+Field Name: Σ Progress
+Field ID: aggregateprogress
+Value: {
+  "progress": 0,
+  "total": 0
+}
+
+Field Name: Approver
+Field ID: customfield_10045
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+  "accountId": "63e17f31bf837c6893daa80b",
+  "emailAddress": "asolomon@enova.com",
+  "avatarUrls": {
+    "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+    "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+  },
+  "displayName": "Alex Solomon",
+  "active": true,
+  "timeZone": "America/Chicago",
+  "accountType": "atlassian"
+}
+
+Field Name: Work Category
+Field ID: customfield_10038
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/customFieldOption/10024",
+  "value": "Q-plan Work",
+  "id": "10024"
+}
+
+Field Name: Pull Requests
+Field ID: customfield_10039
+Value: {
+  "type": "doc",
+  "version": 1,
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "https://git.enova.com/8b/leads/pull/1165",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://git.enova.com/8b/leads/pull/1165"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Field Name: Progress
+Field ID: progress
+Value: {
+  "progress": 0,
+  "total": 0
+}
+
+Field Name: Log Work
+Field ID: worklog
+Value: {
+  "startAt": 0,
+  "maxResults": 20,
+  "total": 0,
+  "worklogs": []
+}
+
+Field Name: Issue Type
+Field ID: issuetype
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/issuetype/10004",
+  "id": "10004",
+  "description": "Stories track functionality or features expressed as user goals.",
+  "iconUrl": "https://enovaagile.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium",
+  "name": "Story",
+  "subtask": false,
+  "avatarId": 10315,
+  "hierarchyLevel": 0
+}
+
+Field Name: Project
+Field ID: project
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/project/10198",
+  "id": "10198",
+  "key": "NCOR",
+  "name": "NetCredit Ins: Orion",
+  "projectTypeKey": "software",
+  "simplified": false,
+  "avatarUrls": {
+    "48x48": "https://enovaagile.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10418",
+    "24x24": "https://enovaagile.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10418?size=small",
+    "16x16": "https://enovaagile.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10418?size=xsmall",
+    "32x32": "https://enovaagile.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10418?size=medium"
+  }
+}
+
+Field Name: Story Points
+Field ID: customfield_10036
+Value: 2
+
+Field Name: Target Quarter-Year
+Field ID: customfield_10037
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/customFieldOption/10456",
+  "value": "Q1-2026",
+  "id": "10456"
+}
+
+Field Name: Work Ratio
+Field ID: workratio
+Value: -1
+
+Field Name: Watchers
+Field ID: watches
+Value: {
+  "self": "https://enovaagile.atlassian.net/rest/api/3/issue/NCOR-10040/watchers",
+  "watchCount": 3,
+  "isWatching": false
+}
+
+Field Name: Restrict to
+Field ID: issuerestriction
+Value: {
+  "issuerestrictions": {},
+  "shouldDisplay": false
+}
+
+Field Name: Created
+Field ID: created
+Value: "2026-02-04T14:58:27.511-0600"
+
+Field Name: Sprint
+Field ID: customfield_10020
+Value: [
+  {
+    "id": 10640,
+    "name": "Orion Q1 '26: 2/18-3/4",
+    "state": "active",
+    "boardId": 322,
+    "goal": "Have the new smart bidding end point completed!",
+    "startDate": "2026-02-18T16:18:03.091Z",
+    "endDate": "2026-03-04T19:43:42.000Z"
+  }
+]
+
+Field Name: [CHART] Date of First Response
+Field ID: customfield_10026
+Value: "2026-02-23T14:27:52.524-0600"
+
+Field Name: Rank
+Field ID: customfield_10019
+Value: "0|hzzzq6:zzzxam"
+
+Field Name: Updated
+Field ID: updated
+Value: "2026-03-02T13:09:15.378-0600"
+
+Field Name: Description
+Field ID: description
+Value: {
+  "type": "doc",
+  "version": 1,
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Current Functionality",
+          "marks": [
+            {
+              "type": "strong"
+            },
+            {
+              "type": "underline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "We have built "
+        },
+        {
+          "type": "text",
+          "text": "this bid_response table",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://enovaagile.atlassian.net/browse/NCOR-10018"
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " in Leads to house the responses we get back from leads providers. It doesn’t have an associated endpoint."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Desired Functionality",
+          "marks": [
+            {
+              "type": "strong"
+            },
+            {
+              "type": "underline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Create an endpoint that can receive bid outcome responses from lead providers."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Endpoint: "
+        },
+        {
+          "type": "text",
+          "text": "/bid_response",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Controller name: "
+        },
+        {
+          "type": "text",
+          "text": "BidResponsesController ",
+          "marks": [
+            {
+              "type": "strong"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "(see "
+        },
+        {
+          "type": "text",
+          "text": "Controller",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://docs.google.com/document/d/12FhGK2IW-thFmKtrFNHvxhkzSkLck0Qq2knrU0QP5SA/edit?tab=t.0#bookmark=id.k1rmyfau34st"
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " details in SOW)"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Expected response format ("
+        },
+        {
+          "type": "text",
+          "text": "NOTE",
+          "marks": [
+            {
+              "type": "strong"
+            },
+            {
+              "type": "underline"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": ": waiting for final confirmation from lead providers, including with regard to order of fields):"
+        }
+      ]
+    },
+    {
+      "type": "orderedList",
+      "attrs": {
+        "order": 1
+      },
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "tracking_number:"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "status:"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "winning_bid_amount:"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "lost_reason: (will be nil if we win a given bid)"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "We will be completing the work to store bid response data in the bid_response table in "
+        },
+        {
+          "type": "text",
+          "text": "this upcoming (and blocked) story",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://enovaagile.atlassian.net/browse/NCOR-10041"
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "We will also need to include metrics for reporting success, fail and error outcomes to a dash."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Acceptance Criteria",
+          "marks": [
+            {
+              "type": "strong"
+            },
+            {
+              "type": "underline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "Given a NC lead provider"
+        },
+        {
+          "type": "hardBreak"
+        },
+        {
+          "type": "text",
+          "text": "When they are a supporting smart bidding "
+        },
+        {
+          "type": "hardBreak"
+        },
+        {
+          "type": "text",
+          "text": "And they send us a response about a lead we’ve bid on"
+        },
+        {
+          "type": "hardBreak"
+        },
+        {
+          "type": "text",
+          "text": "Then we should successfully receive that bid via this new endpoint"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "AC for reporting outcomes and failures. Add in traces"
+        }
+      ]
+    }
+  ]
+}
+
+Field Name: Epic Link
+Field ID: customfield_10014
+Value: "NCOR-10016"
+
+Field Name: Time tracking
+Field ID: timetracking
+Value: {}
+
+Field Name: Attachment
+Field ID: attachment
+Value: [
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140104",
+    "id": "140104",
+    "filename": "Screenshot 2026-02-23 at 3.18.44 PM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=712020%3A975587dd-53d3-444b-a69b-c983d1ca8b09",
+      "accountId": "712020:975587dd-53d3-444b-a69b-c983d1ca8b09",
+      "emailAddress": "qduvall@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/32"
+      },
+      "displayName": "Qwill Duvall",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-23T14:27:51.817-0600",
+    "size": 166428,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140104",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140104"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140706",
+    "id": "140706",
+    "filename": "Screenshot 2026-02-26 at 12.32.03 PM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-26T12:41:34.989-0600",
+    "size": 241824,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140706",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140706"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140707",
+    "id": "140707",
+    "filename": "Screenshot 2026-02-26 at 12.32.52 PM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-26T12:41:35.445-0600",
+    "size": 183274,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140707",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140707"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140705",
+    "id": "140705",
+    "filename": "Screenshot 2026-02-26 at 12.34.01 PM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-26T12:41:34.581-0600",
+    "size": 161878,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140705",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140705"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140704",
+    "id": "140704",
+    "filename": "Screenshot 2026-02-26 at 12.35.29 PM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-26T12:41:34.133-0600",
+    "size": 138619,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140704",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140704"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140875",
+    "id": "140875",
+    "filename": "Screenshot 2026-02-27 at 10.47.03 AM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-27T10:50:19.549-0600",
+    "size": 249849,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140875",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140875"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/140874",
+    "id": "140874",
+    "filename": "Screenshot 2026-02-27 at 10.47.40 AM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-02-27T10:50:19.101-0600",
+    "size": 187013,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/140874",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/140874"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/141021",
+    "id": "141021",
+    "filename": "Screenshot 2026-03-02 at 10.48.15 AM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-03-02T10:50:11.264-0600",
+    "size": 87338,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/141021",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/141021"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/141020",
+    "id": "141020",
+    "filename": "Screenshot 2026-03-02 at 10.48.43 AM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-03-02T10:50:10.866-0600",
+    "size": 53687,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/141020",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/141020"
+  },
+  {
+    "self": "https://enovaagile.atlassian.net/rest/api/3/attachment/141022",
+    "id": "141022",
+    "filename": "Screenshot 2026-03-02 at 10.49.43 AM.png",
+    "author": {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+      "accountId": "5c37752ad650366f53171bb5",
+      "emailAddress": "clazatin@enova.com",
+      "avatarUrls": {
+        "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+        "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+        "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+        "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+      },
+      "displayName": "Cathy Lazatin",
+      "active": true,
+      "timeZone": "America/Chicago",
+      "accountType": "atlassian"
+    },
+    "created": "2026-03-02T10:50:11.609-0600",
+    "size": 55181,
+    "mimeType": "image/png",
+    "content": "https://enovaagile.atlassian.net/rest/api/3/attachment/content/141022",
+    "thumbnail": "https://enovaagile.atlassian.net/rest/api/3/attachment/thumbnail/141022"
+  }
+]
+
+Field Name: Summary
+Field ID: summary
+Value: "M3: Create new endpoint to receive bid outcome responses from lead providers"
+
+Field Name: Organizations
+Field ID: customfield_10002
+Value: []
+
+Field Name: Comment
+Field ID: comment
+Value: {
+  "comments": [
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/226075",
+      "id": "226075",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=712020%3A975587dd-53d3-444b-a69b-c983d1ca8b09",
+        "accountId": "712020:975587dd-53d3-444b-a69b-c983d1ca8b09",
+        "emailAddress": "qduvall@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/32"
+        },
+        "displayName": "Qwill Duvall",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "dev test:"
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 727,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "430b2fa8-912f-4f40-85f8-24876f160209",
+                  "alt": "Screenshot 2026-02-23 at 3.18.44 PM.png",
+                  "collection": "",
+                  "height": 570,
+                  "width": 727
+                }
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "logging: "
+              }
+            ]
+          },
+          {
+            "type": "codeBlock",
+            "content": [
+              {
+                "type": "text",
+                "text": "[ca3313a9-f7df-4477-902f-416966451285] [StatsD] app.leads.bid_responses.create.netcredit.epc_vip.acknowledged:0.001123|ms\n[ca3313a9-f7df-4477-902f-416966451285] method=POST path=/bid_response format=json controller=BidResponsesController action=create status=200 allocations=24805 duration=793.72 view=0.27 db=52.68 unpermitted_params=[\"bid_response\"]\n[ca3313a9-f7df-4477-902f-416966451285] [StatsD] app.leads.db.web.bid_responses.create.SELECT:3|g\n[ca3313a9-f7df-4477-902f-416966451285] [StatsD] app.leads.db.web.bid_responses.create.runtime:52.681999979"
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=712020%3A975587dd-53d3-444b-a69b-c983d1ca8b09",
+        "accountId": "712020:975587dd-53d3-444b-a69b-c983d1ca8b09",
+        "emailAddress": "qduvall@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/712020:975587dd-53d3-444b-a69b-c983d1ca8b09/b5cfc064-fbc6-49b5-893d-077adad92150/32"
+        },
+        "displayName": "Qwill Duvall",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-02-23T14:27:52.524-0600",
+      "updated": "2026-02-24T10:54:55.841-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/226929",
+      "id": "226929",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "QA Notes",
+                "marks": [
+                  {
+                    "type": "strong"
+                  },
+                  {
+                    "type": "underline"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Verified sending an XML request returns an XML response:"
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 699,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "dcd82a96-c9de-45d6-9d56-fb44de7c3a6b",
+                  "alt": "Screenshot 2026-02-26 at 12.32.03 PM.png",
+                  "collection": "",
+                  "height": 638,
+                  "width": 699
+                }
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Verified sending a JSON request returns a JSON response:"
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 699,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "f5c22516-91a3-49f7-8365-eb478a98f309",
+                  "alt": "Screenshot 2026-02-26 at 12.32.52 PM.png",
+                  "collection": "",
+                  "height": 618,
+                  "width": 699
+                }
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Verified error status code is returned when invalid authentication occurs:"
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 709,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "8387f04f-af67-460f-861f-7100f9a55eff",
+                  "alt": "Screenshot 2026-02-26 at 12.34.01 PM.png",
+                  "collection": "",
+                  "height": 544,
+                  "width": 709
+                }
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 701,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "f1045b9e-5c71-4810-abdf-edcb6d8c7dd0",
+                  "alt": "Screenshot 2026-02-26 at 12.35.29 PM.png",
+                  "collection": "",
+                  "height": 547,
+                  "width": 701
+                }
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Verified error is returned when required parameters were missing:"
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 713,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "0e4bc2e4-9dc3-4867-9262-092c2df10cbf",
+                  "alt": "Screenshot 2026-02-27 at 10.47.03 AM.png",
+                  "collection": "",
+                  "height": 674,
+                  "width": 713
+                }
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 704,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "2fc71a66-c767-4310-8af7-4e9a4e3f04f5",
+                  "alt": "Screenshot 2026-02-27 at 10.47.40 AM.png",
+                  "collection": "",
+                  "height": 662,
+                  "width": 704
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-02-26T12:41:36.111-0600",
+      "updated": "2026-02-27T10:50:20.107-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/227408",
+      "id": "227408",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Re-tested and confirmed the previous test results are still valid and pass."
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-03-02T10:19:32.505-0600",
+      "updated": "2026-03-02T10:19:56.652-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/227415",
+      "id": "227415",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+        "accountId": "63e17f31bf837c6893daa80b",
+        "emailAddress": "asolomon@enova.com",
+        "avatarUrls": {
+          "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+        },
+        "displayName": "Alex Solomon",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "I see that I didn’t yet detail the ACs that check that traces are added for the sake of dashboard reporting, though it appears that this was taken into account based on the testing. Can you confirm that the current implementation will suffice "
+              },
+              {
+                "type": "mention",
+                "attrs": {
+                  "id": "712020:975587dd-53d3-444b-a69b-c983d1ca8b09",
+                  "text": "@Qwill Duvall",
+                  "accessLevel": "",
+                  "localId": "16e6d44e-17c8-42e5-8bc5-995ae61a5e45"
+                }
+              },
+              {
+                "type": "text",
+                "text": " "
+              },
+              {
+                "type": "mention",
+                "attrs": {
+                  "id": "5c37752ad650366f53171bb5",
+                  "text": "@Cathy Lazatin",
+                  "accessLevel": "",
+                  "localId": "88d7c372-36cc-45f7-9774-9bb97ea8a5dc"
+                }
+              },
+              {
+                "type": "text",
+                "text": " ?"
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+        "accountId": "63e17f31bf837c6893daa80b",
+        "emailAddress": "asolomon@enova.com",
+        "avatarUrls": {
+          "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+        },
+        "displayName": "Alex Solomon",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-03-02T10:27:16.042-0600",
+      "updated": "2026-03-02T10:27:16.042-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/227423",
+      "id": "227423",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "QA confirming metrics added for endpoint"
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 872,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "e443ffd6-1011-461a-a51b-12f6d026bb8a",
+                  "alt": "Screenshot 2026-03-02 at 10.48.15 AM.png",
+                  "collection": "",
+                  "height": 110,
+                  "width": 872
+                }
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 870,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "05e0f1fb-86cf-4600-91c6-cca844db1ada",
+                  "alt": "Screenshot 2026-03-02 at 10.48.43 AM.png",
+                  "collection": "",
+                  "height": 75,
+                  "width": 870
+                }
+              }
+            ]
+          },
+          {
+            "type": "mediaSingle",
+            "attrs": {
+              "width": 867,
+              "widthType": "pixel",
+              "layout": "align-start"
+            },
+            "content": [
+              {
+                "type": "media",
+                "attrs": {
+                  "type": "file",
+                  "id": "bc6c4581-311c-449a-a956-57b33e599426",
+                  "alt": "Screenshot 2026-03-02 at 10.49.43 AM.png",
+                  "collection": "",
+                  "height": 73,
+                  "width": 867
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-03-02T10:50:12.189-0600",
+      "updated": "2026-03-02T10:50:12.189-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/227425",
+      "id": "227425",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "mention",
+                "attrs": {
+                  "id": "63e17f31bf837c6893daa80b",
+                  "text": "@Alex Solomon",
+                  "accessLevel": ""
+                }
+              },
+              {
+                "type": "text",
+                "text": " I added additional screenshots to show the invalid and acknowledged metrics being captured in the log."
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-03-02T10:52:59.866-0600",
+      "updated": "2026-03-02T10:52:59.866-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/227427",
+      "id": "227427",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+        "accountId": "63e17f31bf837c6893daa80b",
+        "emailAddress": "asolomon@enova.com",
+        "avatarUrls": {
+          "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+        },
+        "displayName": "Alex Solomon",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "mention",
+                "attrs": {
+                  "id": "5c37752ad650366f53171bb5",
+                  "text": "@Cathy Lazatin",
+                  "accessLevel": ""
+                }
+              },
+              {
+                "type": "text",
+                "text": " Thanks, just wanted to be clear that this was a form that could be consumable via the dash."
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=63e17f31bf837c6893daa80b",
+        "accountId": "63e17f31bf837c6893daa80b",
+        "emailAddress": "asolomon@enova.com",
+        "avatarUrls": {
+          "48x48": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "24x24": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "16x16": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png",
+          "32x32": "https://secure.gravatar.com/avatar/6b2321bfa9a11d440304f127b38a0ef5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FAS-2.png"
+        },
+        "displayName": "Alex Solomon",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-03-02T10:53:37.530-0600",
+      "updated": "2026-03-02T10:53:37.530-0600",
+      "jsdPublic": true
+    },
+    {
+      "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment/227428",
+      "id": "227428",
+      "author": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "body": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "mention",
+                "attrs": {
+                  "id": "63e17f31bf837c6893daa80b",
+                  "text": "@Alex Solomon",
+                  "accessLevel": ""
+                }
+              },
+              {
+                "type": "text",
+                "text": " Yes, once the metrics start reporting on Prod, they should be able to be used in a Datadog dashboard to view invalid and acknowledged responses by lead provider."
+              }
+            ]
+          }
+        ]
+      },
+      "updateAuthor": {
+        "self": "https://enovaagile.atlassian.net/rest/api/3/user?accountId=5c37752ad650366f53171bb5",
+        "accountId": "5c37752ad650366f53171bb5",
+        "emailAddress": "clazatin@enova.com",
+        "avatarUrls": {
+          "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/48",
+          "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/24",
+          "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/16",
+          "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/5c37752ad650366f53171bb5/11e73d2e-7413-40d9-ac49-c2f3a1a8c078/32"
+        },
+        "displayName": "Cathy Lazatin",
+        "active": true,
+        "timeZone": "America/Chicago",
+        "accountType": "atlassian"
+      },
+      "created": "2026-03-02T10:55:43.826-0600",
+      "updated": "2026-03-02T10:55:43.826-0600",
+      "jsdPublic": true
+    }
+  ],
+  "self": "https://enovaagile.atlassian.net/rest/api/3/issue/165294/comment",
+  "maxResults": 8,
+  "total": 8,
+  "startAt": 0
+}
