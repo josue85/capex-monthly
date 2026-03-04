@@ -4,13 +4,13 @@ const fs = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
 
-const SPREADSHEET_ID = '1hkoNfwzdS3bmAcsSR_eB4pv8K3Lfo6d42oqPsVrEIJU';
+// Remove hardcoded SPREADSHEET_ID
 const TOKEN_PATH = path.join(__dirname, 'token.json');
 
 function getOAuth2Client() {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = 'http://localhost:3000/api/auth/google/callback';
+    const redirectUri = process.env.OAUTH_REDIRECT_URI || 'http://localhost:3000/api/auth/google/callback';
     
     if (!clientId || !clientSecret) {
         throw new Error('Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in .env');
@@ -56,14 +56,15 @@ async function getAuth() {
     }
 }
 
-async function getValidProjects() {
+async function getValidProjects(spreadsheetId) {
     const auth = await getAuth();
     if (!auth) return [];
-
+    
     const sheets = google.sheets({ version: 'v4', auth });
+    
     try {
         const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: spreadsheetId,
             range: 'Projects!C:C', // Project names are actually in column C
         });
 
@@ -80,14 +81,15 @@ async function getValidProjects() {
     }
 }
 
-async function getValidPeople() {
+async function getValidPeople(spreadsheetId) {
     const auth = await getAuth();
     if (!auth) return [];
-
+    
     const sheets = google.sheets({ version: 'v4', auth });
+    
     try {
         const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: spreadsheetId,
             range: 'People!A:A', // Assuming canonical names are in People tab, column A
         });
 
@@ -132,55 +134,52 @@ function matchPersonToName(personName, validPeople) {
     return personName;
 }
 
-async function appendCapExData(rows) {
+async function appendCapExData(rows, spreadsheetId) {
+    if (!rows || rows.length === 0) return;
+    
     const auth = await getAuth();
     if (!auth) throw new Error("Google Sheets authentication not configured");
 
     const sheets = google.sheets({ version: 'v4', auth });
-    
-    // Filter out rows that have 'No Epic' BEFORE formatting for export
-    const validRows = rows.filter(row => row.Project !== 'No Epic');
 
-    // Create a 2-row empty spacer
-    const emptyRow = ["", "", "", "", "", "", "", "", "", ""];
-    
-    // Format rows to match the specific spreadsheet columns:
-    // A: (Empty)
+    // Format rows for the sheet
+    // Columns should map as: 
+    // A: Brand (e.g., NetCredit) - hardcoding to NetCredit for now based on your other function
     // B: Person
+    // C through I: Empty or other data?
+    // J: Project Name
+    
+    // Wait, let's map it based on the exact structure you requested:
+    // "the project name in Column B (it should be Column J) and the person's name should go to column B (right now it's going into column a)"
+
+    // Let's assume the columns are:
+    // A: Brand (NetCredit)
+    // B: Person Name
     // C: Design
-    // D: Coding / Development
-    // E: QA Testing
-    // F: (Empty - formerly Training)
+    // D: Development
+    // E: QA
+    // F: Training
     // G: Project Management
     // H: Project Oversight
     // I: (Empty)
-    // J: Project
-    const mappedValues = validRows.map(row => {
-        // Helper to convert '0%' to ''
-        const cleanZero = (val) => (val === '0%' ? '' : val);
-
-        return [
-            "",                     // A: Empty
-            row.Person,             // B: Person (Last Name, First Name)
-            cleanZero(row.Design),  // C: Design
-            cleanZero(row.Development), // D: Coding / Development
-            cleanZero(row.QA),      // E: QA Testing
-            "",                     // F: Empty
-            cleanZero(row.ProjectManagement), // G: Project Management
-            cleanZero(row.ProjectOversight),  // H: Project Oversight
-            "",                     // I: Empty
-            row.Project             // J: Project
-        ];
-    });
-
-    if (mappedValues.length === 0) return { success: true, message: "No valid rows to export" };
-
-    // Prepend the empty rows to the data we are about to insert
-    const values = [emptyRow, emptyRow, ...mappedValues];
+    // J: Project Name
+    
+    const values = rows.map(row => [
+        "NetCredit",              // A
+        row.Person,               // B
+        row.Design,               // C
+        row.Development,          // D
+        row.QA,                   // E
+        row.Training,             // F
+        row.ProjectManagement,    // G
+        row.ProjectOversight,     // H
+        "",                       // I
+        row.Project               // J
+    ]);
 
     try {
         await sheets.spreadsheets.values.append({
-            spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: spreadsheetId,
             range: 'NetCredit!A:A', // The Sheets API uses this just to find the table. Sticking to A:A prevents it from finding an empty space further right.
             valueInputOption: 'USER_ENTERED', 
             insertDataOption: 'INSERT_ROWS', // Force it to insert rows correctly
@@ -196,7 +195,7 @@ async function appendCapExData(rows) {
     }
 }
 
-async function appendNewProjects(newProjects) {
+async function appendNewProjects(newProjects, managerName, spreadsheetId) {
     if (!newProjects || newProjects.length === 0) return;
     
     const auth = await getAuth();
@@ -205,12 +204,12 @@ async function appendNewProjects(newProjects) {
     const sheets = google.sheets({ version: 'v4', auth });
 
     // Format new projects
-    // Column A: NetCredit, B: Feliciano, Josue, C: NC: + Project Name, D: (Blank), E: TRUE (checked), F: In Progress, J: 5
+    // Column A: NetCredit, B: Manager Name, C: NC: + Project Name, D: (Blank), E: TRUE (checked), F: In Progress, J: 5
     const values = newProjects.map(proj => {
         const projectName = proj.startsWith('NC') ? proj : `NC: ${proj}`;
         return [
             "NetCredit",         // A
-            "Feliciano, Josue",  // B
+            managerName || "Manager, Name", // B
             projectName,         // C
             "",                  // D
             "TRUE",              // E (Checkbox)
@@ -225,7 +224,7 @@ async function appendNewProjects(newProjects) {
     try {
         // First find the actual last row by checking Column C
         const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: spreadsheetId,
             range: 'Projects!C:C',
         });
         
@@ -241,7 +240,7 @@ async function appendNewProjects(newProjects) {
         // Use update instead of append to put it exactly where we want it, 
         // avoiding issues with pre-formatted blank rows at the bottom of the sheet.
         await sheets.spreadsheets.values.update({
-            spreadsheetId: SPREADSHEET_ID,
+            spreadsheetId: spreadsheetId,
             range: `Projects!A${insertRow}:J${insertRow + values.length - 1}`,
             valueInputOption: 'USER_ENTERED',
             requestBody: {
@@ -256,6 +255,25 @@ async function appendNewProjects(newProjects) {
     }
 }
 
+async function getSpreadsheetInfo(spreadsheetId) {
+    const auth = await getAuth();
+    if (!auth) throw new Error("Google Sheets authentication not configured");
+    const sheets = google.sheets({ version: 'v4', auth });
+    
+    try {
+        const response = await sheets.spreadsheets.get({
+            spreadsheetId
+        });
+        return {
+            title: response.data.properties.title,
+            spreadsheetId: response.data.spreadsheetId
+        };
+    } catch (error) {
+        console.error('Error fetching spreadsheet info:', error.message);
+        throw new Error('Failed to access spreadsheet. Please check the ID/URL and your permissions.');
+    }
+}
+
 module.exports = {
     getAuthUrl,
     handleAuthCallback,
@@ -265,5 +283,6 @@ module.exports = {
     matchEpicToProject,
     matchPersonToName,
     appendCapExData,
-    appendNewProjects
+    appendNewProjects,
+    getSpreadsheetInfo
 };

@@ -1,3 +1,4 @@
 node_modules/
 .env
 gh.exe
+server/token.json

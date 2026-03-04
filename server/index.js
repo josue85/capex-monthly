@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const { fetchCapExData } = require('./jira');
-const { getAuthUrl, handleAuthCallback, checkAuthStatus, getValidProjects, getValidPeople, matchEpicToProject, matchPersonToName, appendCapExData, appendNewProjects } = require('./sheets');
+const { getAuthUrl, handleAuthCallback, checkAuthStatus, getValidProjects, getValidPeople, matchEpicToProject, matchPersonToName, appendCapExData, appendNewProjects, getSpreadsheetInfo } = require('./sheets');
 
 const app = express();
 app.use(cors());
@@ -34,7 +35,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
     try {
         await handleAuthCallback(code);
         // Redirect back to frontend
-        res.redirect('http://localhost:5173');
+        res.redirect('/');
     } catch (error) {
         console.error('Error during Google Auth Callback:', error);
         res.status(500).send('Authentication failed');
@@ -44,47 +45,83 @@ app.get('/api/auth/google/callback', async (req, res) => {
 
 // --- Core App Routes ---
 
+app.post('/api/sheet/info', async (req, res) => {
+    try {
+        const { spreadsheetId } = req.body;
+        if (!spreadsheetId) {
+            return res.status(400).json({ error: 'Missing spreadsheetId' });
+        }
+
+        // Basic parsing just in case they paste the full URL
+        let finalId = spreadsheetId;
+        const match = spreadsheetId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) {
+            finalId = match[1];
+        }
+
+        const info = await getSpreadsheetInfo(finalId);
+        res.json(info);
+    } catch (error) {
+        console.error('Sheet info error:', error);
+        res.status(500).json({ error: error.message || 'Failed to fetch spreadsheet info' });
+    }
+});
+
 app.post('/api/capex/preview', async (req, res) => {
     try {
-        const { projectKey, year, month } = req.body;
+        const { projectKey, year, month, managerName, spreadsheetId } = req.body;
         
         if (!projectKey || !year || !month) {
             return res.status(400).json({ error: 'Missing required parameters: projectKey, year, month' });
         }
 
+        // Extract ID if URL was passed
+        let finalSheetId = spreadsheetId;
+        if (finalSheetId) {
+            const match = finalSheetId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (match && match[1]) {
+                finalSheetId = match[1];
+            }
+        }
+
         console.log(`Fetching preview for ${projectKey} - ${year}-${month}`);
         
         // 1. Fetch raw data from Jira
-        let data = await fetchCapExData(projectKey, year, month);
+        let data = await fetchCapExData(projectKey, year, month, managerName);
 
         // 2. Try to fetch valid 'NC:' projects and valid people from Sheets for fuzzy matching (if authed)
         const isAuthed = await checkAuthStatus();
-        if (isAuthed) {
-            const [validProjects, validPeople] = await Promise.all([
-                getValidProjects(),
-                getValidPeople()
-            ]);
+        if (isAuthed && finalSheetId) {
+            try {
+                const [validProjects, validPeople] = await Promise.all([
+                    getValidProjects(finalSheetId),
+                    getValidPeople(finalSheetId)
+                ]);
 
-            data = data.map(row => {
-                let mappedProject = row.Project;
-                let mappedPerson = row.Person;
+                data = data.map(row => {
+                    let mappedProject = row.Project;
+                    let mappedPerson = row.Person;
 
-                if (validProjects.length > 0) {
-                    mappedProject = matchEpicToProject(row.Project, validProjects);
-                }
+                    if (validProjects.length > 0) {
+                        mappedProject = matchEpicToProject(row.Project, validProjects);
+                    }
 
-                if (validPeople.length > 0) {
-                    mappedPerson = matchPersonToName(row.Person, validPeople);
-                }
+                    if (validPeople.length > 0) {
+                        mappedPerson = matchPersonToName(row.Person, validPeople);
+                    }
 
-                return {
-                    ...row,
-                    OriginalEpic: row.Project,
-                    Project: mappedProject,
-                    OriginalPerson: row.Person,
-                    Person: mappedPerson
-                };
-            });
+                    return {
+                        ...row,
+                        OriginalEpic: row.Project,
+                        Project: mappedProject,
+                        OriginalPerson: row.Person,
+                        Person: mappedPerson
+                    };
+                });
+            } catch (sheetError) {
+                console.warn('Could not fetch valid lists for matching (might be invalid sheet ID):', sheetError.message);
+                // Proceed without fuzzy matching
+            }
         }
 
         res.json(data);
@@ -96,15 +133,26 @@ app.post('/api/capex/preview', async (req, res) => {
 
 app.post('/api/capex/export', async (req, res) => {
     try {
-        const { rows, newProjects } = req.body;
+        const { rows, newProjects, managerName, spreadsheetId } = req.body;
         console.log("Received export request with newProjects:", newProjects);
         
         if (!rows || !Array.isArray(rows)) {
             return res.status(400).json({ error: 'Invalid data format' });
         }
+        
+        if (!spreadsheetId) {
+            return res.status(400).json({ error: 'Missing spreadsheetId' });
+        }
+        
+        // Extract ID if URL was passed
+        let finalSheetId = spreadsheetId;
+        const match = finalSheetId.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) {
+            finalSheetId = match[1];
+        }
 
         if (newProjects && Array.isArray(newProjects) && newProjects.length > 0) {
-            await appendNewProjects(newProjects);
+            await appendNewProjects(newProjects, managerName, finalSheetId);
             
             // Also update the rows so the exported CapEx data uses the newly formatted 'NC:' name
             const updatedRows = rows.map(row => {
@@ -113,9 +161,9 @@ app.post('/api/capex/export', async (req, res) => {
                 }
                 return row;
             });
-            await appendCapExData(updatedRows);
+            await appendCapExData(updatedRows, finalSheetId);
         } else {
-            await appendCapExData(rows);
+            await appendCapExData(rows, finalSheetId);
         }
         
         res.json({ success: true, message: 'Successfully exported to Google Sheets' });
@@ -125,7 +173,14 @@ app.post('/api/capex/export', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+// Serve frontend in production
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

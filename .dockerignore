@@ -1,0 +1,23 @@
+# Ignore node_modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Ignore local environment files and credentials
+.env
+token.json
+server/token.json
+credentials.json
+server/credentials.json
+
+# Ignore build artifacts (will be generated in container)
+client/dist/
+
+# Git
+.git
+.gitignore
+
+# Misc
+npm-debug.log
+yarn-error.log
+.DS_Store

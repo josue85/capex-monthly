@@ -41,7 +41,7 @@ async function getEpicName(client, epicKey) {
     }
 }
 
-async function fetchCapExData(projectKey, year, month) {
+async function fetchCapExData(projectKey, year, month, managerName) {
     const client = getJiraClient();
     
     // Construct dates for JQL. e.g. "2023-10-01" to "2023-10-31"
@@ -166,10 +166,10 @@ async function fetchCapExData(projectKey, year, month) {
             }
         }
 
-        // Add Feliciano with 10% Project Management for each unique epic
+        // Add Manager with 10% Project Management for each unique epic
         for (const epicName of uniqueEpics) {
             finalRows.push({
-                Person: 'Feliciano, Josue', // Assuming Josue based on your user directory
+                Person: managerName || 'Manager, Name', 
                 Project: epicName,
                 Design: '0%',
                 Development: '0%',

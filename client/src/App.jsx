@@ -6,7 +6,11 @@ function App() {
   const [projectKey, setProjectKey] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState(new Date().getFullYear());
+  const [managerName, setManagerName] = useState(localStorage.getItem('capexManagerName') || '');
+  const [spreadsheetInput, setSpreadsheetInput] = useState(localStorage.getItem('capexSpreadsheetId') || '1hkoNfwzdS3bmAcsSR_eB4pv8K3Lfo6d42oqPsVrEIJU');
+  const [spreadsheetInfo, setSpreadsheetInfo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sheetLoading, setSheetLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [exportStatus, setExportStatus] = useState(null);
@@ -15,11 +19,22 @@ function App() {
   const [selectedNewProjects, setSelectedNewProjects] = useState([]);
 
   useEffect(() => {
+    localStorage.setItem('capexManagerName', managerName);
+  }, [managerName]);
+
+  useEffect(() => {
+    localStorage.setItem('capexSpreadsheetId', spreadsheetInput);
+  }, [spreadsheetInput]);
+
+  useEffect(() => {
     // Check if the backend has Google OAuth tokens saved
     const checkAuth = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/auth/status');
+        const response = await axios.get('/api/auth/status');
         setIsGoogleAuthed(response.data.authenticated);
+        if (response.data.authenticated && spreadsheetInput) {
+          fetchSheetInfo(spreadsheetInput);
+        }
       } catch (err) {
         console.error("Failed to check auth status", err);
       } finally {
@@ -29,6 +44,20 @@ function App() {
     checkAuth();
   }, []);
 
+  const fetchSheetInfo = async (idOrUrl) => {
+    if (!idOrUrl) return;
+    setSheetLoading(true);
+    try {
+      const response = await axios.post('/api/sheet/info', { spreadsheetId: idOrUrl });
+      setSpreadsheetInfo(response.data);
+    } catch (err) {
+      console.error("Failed to fetch sheet info", err);
+      setSpreadsheetInfo(null);
+    } finally {
+      setSheetLoading(false);
+    }
+  };
+
   const fetchPreview = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -36,10 +65,12 @@ function App() {
     setExportStatus(null);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/capex/preview', {
+      const response = await axios.post('/api/capex/preview', {
         projectKey,
         year: parseInt(year),
-        month: parseInt(month)
+        month: parseInt(month),
+        managerName,
+        spreadsheetId: spreadsheetInput
       });
       setData(response.data);
       setSelectedNewProjects([]); // Reset on new preview
@@ -56,9 +87,11 @@ function App() {
     setExportStatus(null);
     
     try {
-      await axios.post('http://localhost:3000/api/capex/export', { 
+      await axios.post('/api/capex/export', { 
         rows: data,
-        newProjects: selectedNewProjects 
+        newProjects: selectedNewProjects,
+        managerName,
+        spreadsheetId: spreadsheetInput
       });
       setExportStatus('success');
       setSelectedNewProjects([]); // Clear after successful export
@@ -98,13 +131,20 @@ function App() {
           <div className="flex items-center gap-3">
             {!checkingAuth && (
               isGoogleAuthed ? (
-                <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1.5 rounded-full text-sm font-medium border border-green-200">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                  Google Sheets Connected
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1.5 rounded-full text-sm font-medium border border-green-200">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                    Google Connected
+                  </div>
+                  {spreadsheetInfo && (
+                    <div className="text-xs text-gray-500 font-medium max-w-[200px] truncate" title={spreadsheetInfo.title}>
+                      📄 {spreadsheetInfo.title}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <a 
-                  href="http://localhost:3000/api/auth/google"
+                  href="/api/auth/google"
                   className="flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-md text-sm font-medium border border-gray-300 hover:border-enova-light hover:text-enova-light transition-colors shadow-sm"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -121,17 +161,55 @@ function App() {
         </header>
 
         <main className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          
+          <div className="mb-8 pb-6 border-b border-gray-100 flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex flex-col gap-1 flex-1">
+              <label className="text-sm font-medium text-enova-dark">Google Sheet URL or ID</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Paste URL like https://docs.google.com/spreadsheets/d/1hko..."
+                  value={spreadsheetInput}
+                  onChange={(e) => setSpreadsheetInput(e.target.value)}
+                  className="border border-gray-300 rounded-md px-3 py-2 flex-1 focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => fetchSheetInfo(spreadsheetInput)}
+                  disabled={!spreadsheetInput || sheetLoading || !isGoogleAuthed}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-md transition-colors duration-200 disabled:opacity-50 border border-gray-300"
+                >
+                  {sheetLoading ? 'Connecting...' : 'Connect Sheet'}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                You must connect a Google Sheet before generating a preview, as it checks existing projects and names.
+              </p>
+            </div>
+          </div>
+
           <form onSubmit={fetchPreview} className="flex flex-wrap items-end gap-4 mb-8">
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-enova-dark">Jira Project Key</label>
               <input
                 type="text"
                 required
+                list="jira-projects"
                 placeholder="e.g. NCOR"
                 value={projectKey}
                 onChange={(e) => setProjectKey(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none"
+                className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none bg-white"
               />
+              <datalist id="jira-projects">
+                <option value="CCR">Consumer Core (CCR)</option>
+                <option value="NCCYG">Cygnus (NCCYG)</option>
+                <option value="NCFE">Front End Team (NCFE)</option>
+                <option value="NCLX">Lynx (NCLX)</option>
+                <option value="NCOR">Orion (NCOR)</option>
+                <option value="NCPG">Pegasus (NCPG)</option>
+                <option value="NCPH">Phoenix (NCPH)</option>
+                <option value="NCVG">Vega (NCVG)</option>
+              </datalist>
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-enova-dark">Year</label>
@@ -165,6 +243,17 @@ function App() {
                 <option value="11">November</option>
                 <option value="12">December</option>
               </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-enova-dark">Manager Name</label>
+              <input
+                type="text"
+                required
+                placeholder="Lastname, Firstname"
+                value={managerName}
+                onChange={(e) => setManagerName(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 w-48 focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none bg-white"
+              />
             </div>
             <button
               type="submit"
@@ -200,15 +289,17 @@ function App() {
                   </p>
                   <div className="flex flex-col gap-2">
                     {unmatchedProjects.map(proj => (
-                      <label key={proj} className="flex items-center gap-2 text-sm text-gray-700 bg-white px-3 py-2 rounded border border-yellow-100 cursor-pointer hover:bg-yellow-50/50">
+                      <label key={proj} className="flex items-start gap-3 text-sm text-gray-700 bg-white px-3 py-2 rounded border border-yellow-100 cursor-pointer hover:bg-yellow-50/50">
                         <input 
                           type="checkbox" 
                           checked={selectedNewProjects.includes(proj)}
                           onChange={() => handleToggleNewProject(proj)}
-                          className="rounded border-gray-300 text-enova-light focus:ring-enova-light"
+                          className="rounded border-gray-300 text-enova-light focus:ring-enova-light mt-0.5"
                         />
-                        <span className="font-medium">{proj}</span>
-                        <span className="text-gray-400 text-xs ml-auto">Will be added as: NC: {proj}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{proj}</span>
+                          <span className="text-gray-400 text-xs mt-0.5">Will be added as: NC: {proj}</span>
+                        </div>
                       </label>
                     ))}
                   </div>
