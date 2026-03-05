@@ -23,7 +23,11 @@ async function getAuthUrl() {
     const oAuth2Client = getOAuth2Client();
     return oAuth2Client.generateAuthUrl({
         access_type: 'offline',
-        scope: ['https://www.googleapis.com/auth/spreadsheets'],
+        scope: [
+            'https://www.googleapis.com/auth/spreadsheets',
+            'https://www.googleapis.com/auth/documents',
+            'https://www.googleapis.com/auth/drive'
+        ],
         prompt: 'consent'
     });
 }
@@ -165,7 +169,7 @@ async function appendCapExData(rows, spreadsheetId) {
     // J: Project Name
     
     const values = rows.map(row => [
-        "NetCredit",              // A
+        "",                       // A (Left blank as requested)
         row.Person,               // B
         row.Design,               // C
         row.Development,          // D
@@ -180,7 +184,7 @@ async function appendCapExData(rows, spreadsheetId) {
     try {
         await sheets.spreadsheets.values.append({
             spreadsheetId: spreadsheetId,
-            range: 'NetCredit!A:A', // The Sheets API uses this just to find the table. Sticking to A:A prevents it from finding an empty space further right.
+            range: 'NetCredit!B:B', // Target B:B so it accurately finds the bottom of the existing list (since A is now empty)
             valueInputOption: 'USER_ENTERED', 
             insertDataOption: 'INSERT_ROWS', // Force it to insert rows correctly
             requestBody: {
@@ -195,7 +199,7 @@ async function appendCapExData(rows, spreadsheetId) {
     }
 }
 
-async function appendNewProjects(newProjects, managerName, spreadsheetId) {
+async function appendNewProjects(newProjects, managerName, spreadsheetId, brdUrls = {}) {
     if (!newProjects || newProjects.length === 0) return;
     
     const auth = await getAuth();
@@ -204,14 +208,15 @@ async function appendNewProjects(newProjects, managerName, spreadsheetId) {
     const sheets = google.sheets({ version: 'v4', auth });
 
     // Format new projects
-    // Column A: NetCredit, B: Manager Name, C: NC: + Project Name, D: (Blank), E: TRUE (checked), F: In Progress, J: 5
+    // Column A: NetCredit, B: Manager Name, C: NC: + Project Name, D: (BRD URL or Blank), E: TRUE (checked), F: In Progress, J: 5
     const values = newProjects.map(proj => {
         const projectName = proj.startsWith('NC') ? proj : `NC: ${proj}`;
+        const docUrl = brdUrls[proj] || "";
         return [
             "NetCredit",         // A
             managerName || "Manager, Name", // B
             projectName,         // C
-            "",                  // D
+            docUrl,              // D (BRD Link)
             "TRUE",              // E (Checkbox)
             "In Progress",       // F
             "",                  // G
@@ -274,7 +279,27 @@ async function getSpreadsheetInfo(spreadsheetId) {
     }
 }
 
+async function getRecentSpreadsheets() {
+    const auth = await getAuth();
+    if (!auth) throw new Error("Google API authentication not configured");
+
+    const drive = google.drive({ version: 'v3', auth });
+    try {
+        const response = await drive.files.list({
+            q: "mimeType='application/vnd.google-apps.spreadsheet' and trashed=false",
+            orderBy: "recency desc",
+            pageSize: 10,
+            fields: "files(id, name, modifiedTime, iconLink, webViewLink)"
+        });
+        return response.data.files || [];
+    } catch (error) {
+        console.error('Error fetching recent spreadsheets:', error.message);
+        throw new Error('Failed to fetch recent spreadsheets.');
+    }
+}
+
 module.exports = {
+    getAuth,
     getAuthUrl,
     handleAuthCallback,
     checkAuthStatus,
@@ -284,5 +309,6 @@ module.exports = {
     matchPersonToName,
     appendCapExData,
     appendNewProjects,
-    getSpreadsheetInfo
+    getSpreadsheetInfo,
+    getRecentSpreadsheets
 };

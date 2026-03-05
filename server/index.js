@@ -4,7 +4,9 @@ const path = require('path');
 require('dotenv').config();
 
 const { fetchCapExData } = require('./jira');
-const { getAuthUrl, handleAuthCallback, checkAuthStatus, getValidProjects, getValidPeople, matchEpicToProject, matchPersonToName, appendCapExData, appendNewProjects, getSpreadsheetInfo } = require('./sheets');
+const { getAuthUrl, handleAuthCallback, checkAuthStatus, getValidProjects, getValidPeople, matchEpicToProject, matchPersonToName, appendCapExData, appendNewProjects, getSpreadsheetInfo, getRecentSpreadsheets } = require('./sheets');
+const { getTemplateVariables, generateBrdDocument } = require('./docs');
+const { extractVariablesFromText } = require('./extract');
 
 const app = express();
 app.use(cors());
@@ -64,6 +66,19 @@ app.post('/api/sheet/info', async (req, res) => {
     } catch (error) {
         console.error('Sheet info error:', error);
         res.status(500).json({ error: error.message || 'Failed to fetch spreadsheet info' });
+    }
+});
+
+app.get('/api/sheets/recent', async (req, res) => {
+    try {
+        const isAuthed = await checkAuthStatus();
+        if (!isAuthed) return res.status(401).json({ error: 'Not authenticated' });
+
+        const files = await getRecentSpreadsheets();
+        res.json({ files });
+    } catch (error) {
+        console.error('Recent sheets error:', error);
+        res.status(500).json({ error: error.message || 'Failed to fetch recent sheets' });
     }
 });
 
@@ -152,7 +167,9 @@ app.post('/api/capex/export', async (req, res) => {
         }
 
         if (newProjects && Array.isArray(newProjects) && newProjects.length > 0) {
-            await appendNewProjects(newProjects, managerName, finalSheetId);
+            // Check if brdUrls are passed, mapping project names to their generated doc URLs
+            const { brdUrls } = req.body;
+            await appendNewProjects(newProjects, managerName, finalSheetId, brdUrls || {});
             
             // Also update the rows so the exported CapEx data uses the newly formatted 'NC:' name
             const updatedRows = rows.map(row => {
@@ -170,6 +187,51 @@ app.post('/api/capex/export', async (req, res) => {
     } catch (error) {
         console.error('Export error:', error);
         res.status(500).json({ error: 'Failed to export to Google Sheets' });
+    }
+});
+
+// --- BRD Generation Routes ---
+
+app.post('/api/brd/template-variables', async (req, res) => {
+    try {
+        const templateUrl = process.env.BRD_TEMPLATE_URL;
+        if (!templateUrl) return res.status(500).json({ error: 'BRD_TEMPLATE_URL is not configured in the server environment.' });
+        
+        const variables = await getTemplateVariables(templateUrl);
+        res.json({ variables });
+    } catch (error) {
+        console.error('Template parsing error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/brd/extract', async (req, res) => {
+    try {
+        const { textOrUrls, variables } = req.body;
+        if (!textOrUrls || !variables) return res.status(400).json({ error: 'Missing textOrUrls or variables' });
+        
+        const extractedData = await extractVariablesFromText(textOrUrls, variables);
+        res.json({ extractedData });
+    } catch (error) {
+        console.error('Extraction error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/brd/generate', async (req, res) => {
+    try {
+        const templateUrl = process.env.BRD_TEMPLATE_URL;
+        const { projectName, variablesMap } = req.body;
+        if (!templateUrl) return res.status(500).json({ error: 'BRD_TEMPLATE_URL is not configured in the server environment.' });
+        if (!projectName || !variablesMap) {
+            return res.status(400).json({ error: 'Missing required parameters' });
+        }
+        
+        const docUrl = await generateBrdDocument(templateUrl, projectName, variablesMap);
+        res.json({ url: docUrl });
+    } catch (error) {
+        console.error('Document generation error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 

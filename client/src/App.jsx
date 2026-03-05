@@ -17,6 +17,19 @@ function App() {
   const [isGoogleAuthed, setIsGoogleAuthed] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [selectedNewProjects, setSelectedNewProjects] = useState([]);
+  const [generatedBrds, setGeneratedBrds] = useState({});
+  const [brdModalProject, setBrdModalProject] = useState(null);
+  const [brdVariables, setBrdVariables] = useState([]);
+  const [brdFormValues, setBrdFormValues] = useState({});
+  const [brdInputText, setBrdInputText] = useState('');
+  const [brdLoading, setBrdLoading] = useState(false);
+  const [brdMessage, setBrdMessage] = useState(null);
+
+  // Sheet Picker State
+  const [isSheetPickerOpen, setIsSheetPickerOpen] = useState(false);
+  const [recentSheets, setRecentSheets] = useState([]);
+  const [loadingRecent, setLoadingRecent] = useState(false);
+  const [manualSheetUrl, setManualSheetUrl] = useState('');
 
   useEffect(() => {
     localStorage.setItem('capexManagerName', managerName);
@@ -91,10 +104,12 @@ function App() {
         rows: data,
         newProjects: selectedNewProjects,
         managerName,
-        spreadsheetId: spreadsheetInput
+        spreadsheetId: spreadsheetInput,
+        brdUrls: generatedBrds
       });
       setExportStatus('success');
       setSelectedNewProjects([]); // Clear after successful export
+      setGeneratedBrds({}); // Clear BRDs
     } catch (err) {
       setExportStatus('error');
       setError('Failed to export to Google Sheets: ' + (err.response?.data?.error || err.message));
@@ -113,6 +128,106 @@ function App() {
     setSelectedNewProjects(prev => 
       prev.includes(proj) ? prev.filter(p => p !== proj) : [...prev, proj]
     );
+  };
+
+  const openBrdModal = async (proj) => {
+    setBrdModalProject(proj);
+    setBrdVariables([]);
+    setBrdFormValues({});
+    setBrdInputText('');
+    setBrdMessage(null);
+    setBrdLoading(true);
+
+    try {
+      const res = await axios.post('/api/brd/template-variables', {});
+      setBrdVariables(res.data.variables);
+      const initialValues = {};
+      res.data.variables.forEach(v => initialValues[v] = '');
+      setBrdFormValues(initialValues);
+    } catch (err) {
+      setBrdMessage({ type: 'error', text: 'Failed to read template variables. ' + (err.response?.data?.error || err.message) });
+    } finally {
+      setBrdLoading(false);
+    }
+  };
+
+  const closeBrdModal = () => {
+    setBrdModalProject(null);
+  };
+
+  const handleAutoExtract = async () => {
+    if (!brdInputText.trim()) return;
+    setBrdLoading(true);
+    setBrdMessage({ type: 'info', text: 'Extracting data with AI...' });
+    
+    try {
+      const res = await axios.post('/api/brd/extract', {
+        textOrUrls: brdInputText,
+        variables: brdVariables
+      });
+      const extracted = res.data.extractedData;
+      
+      setBrdFormValues(prev => ({
+        ...prev,
+        ...extracted
+      }));
+      setBrdMessage({ type: 'success', text: 'Extraction complete! Please review the fields.' });
+    } catch (err) {
+      setBrdMessage({ type: 'error', text: 'Extraction failed. ' + (err.response?.data?.error || err.message) });
+    } finally {
+      setBrdLoading(false);
+    }
+  };
+
+  const handleGenerateBrd = async () => {
+    setBrdLoading(true);
+    setBrdMessage({ type: 'info', text: 'Generating document...' });
+
+    try {
+      const res = await axios.post('/api/brd/generate', {
+        projectName: brdModalProject,
+        variablesMap: brdFormValues
+      });
+      
+      setGeneratedBrds(prev => ({
+        ...prev,
+        [brdModalProject]: res.data.url
+      }));
+      
+      // Auto-check the project so it gets exported
+      if (!selectedNewProjects.includes(brdModalProject)) {
+        setSelectedNewProjects(prev => [...prev, brdModalProject]);
+      }
+      
+      setBrdMessage({ type: 'success', text: 'Document generated successfully!' });
+      setTimeout(() => closeBrdModal(), 2000);
+    } catch (err) {
+      setBrdMessage({ type: 'error', text: 'Generation failed. ' + (err.response?.data?.error || err.message) });
+    } finally {
+      setBrdLoading(false);
+    }
+  };
+
+  const openSheetPicker = async () => {
+    setIsSheetPickerOpen(true);
+    setManualSheetUrl('');
+    if (!isGoogleAuthed) return;
+    
+    setLoadingRecent(true);
+    try {
+      const res = await axios.get('/api/sheets/recent');
+      setRecentSheets(res.data.files || []);
+    } catch (err) {
+      console.error('Failed to load recent sheets', err);
+    } finally {
+      setLoadingRecent(false);
+    }
+  };
+
+  const selectSheet = async (idOrUrl) => {
+    setSpreadsheetInput(idOrUrl);
+    setIsSheetPickerOpen(false);
+    await fetchSheetInfo(idOrUrl);
   };
 
   return (
@@ -136,11 +251,6 @@ function App() {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                     Google Connected
                   </div>
-                  {spreadsheetInfo && (
-                    <div className="text-xs text-gray-500 font-medium max-w-[200px] truncate" title={spreadsheetInfo.title}>
-                      📄 {spreadsheetInfo.title}
-                    </div>
-                  )}
                 </div>
               ) : (
                 <a 
@@ -162,30 +272,31 @@ function App() {
 
         <main className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
           
-          <div className="mb-8 pb-6 border-b border-gray-100 flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex flex-col gap-1 flex-1">
-              <label className="text-sm font-medium text-enova-dark">Google Sheet URL or ID</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Paste URL like https://docs.google.com/spreadsheets/d/1hko..."
-                  value={spreadsheetInput}
-                  onChange={(e) => setSpreadsheetInput(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-2 flex-1 focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none bg-white"
-                />
-                <button
-                  type="button"
-                  onClick={() => fetchSheetInfo(spreadsheetInput)}
-                  disabled={!spreadsheetInput || sheetLoading || !isGoogleAuthed}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-md transition-colors duration-200 disabled:opacity-50 border border-gray-300"
-                >
-                  {sheetLoading ? 'Connecting...' : 'Connect Sheet'}
-                </button>
+          {/* Prominent Sheet Banner */}
+          <div className="mb-8 p-5 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center shrink-0">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.5 3h-15C3.12 3 2 4.12 2 5.5v13C2 19.88 3.12 21 4.5 21h15c1.38 0 2.5-1.12 2.5-2.5v-13C22 4.12 20.88 3 19.5 3zM19 19H5V5h14v14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z" /></svg>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                You must connect a Google Sheet before generating a preview, as it checks existing projects and names.
-              </p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-0.5">Target Spreadsheet</p>
+                {sheetLoading ? (
+                  <p className="text-lg font-bold text-gray-400">Loading...</p>
+                ) : spreadsheetInfo ? (
+                  <a href={`https://docs.google.com/spreadsheets/d/${spreadsheetInfo.spreadsheetId}/edit`} target="_blank" rel="noreferrer" className="text-lg font-bold text-gray-800 hover:text-enova-light transition-colors truncate block">
+                    {spreadsheetInfo.title}
+                  </a>
+                ) : (
+                  <p className="text-lg font-bold text-gray-400">No sheet selected</p>
+                )}
+              </div>
             </div>
+            <button
+              onClick={openSheetPicker}
+              className="bg-white border border-gray-300 hover:border-enova-light hover:text-enova-light text-gray-700 font-medium px-4 py-2 rounded-md shadow-sm transition-all duration-200 whitespace-nowrap"
+            >
+              {spreadsheetInfo ? 'Change Sheet' : 'Select Sheet'}
+            </button>
           </div>
 
           <form onSubmit={fetchPreview} className="flex flex-wrap items-end gap-4 mb-8">
@@ -289,18 +400,34 @@ function App() {
                   </p>
                   <div className="flex flex-col gap-2">
                     {unmatchedProjects.map(proj => (
-                      <label key={proj} className="flex items-start gap-3 text-sm text-gray-700 bg-white px-3 py-2 rounded border border-yellow-100 cursor-pointer hover:bg-yellow-50/50">
-                        <input 
-                          type="checkbox" 
-                          checked={selectedNewProjects.includes(proj)}
-                          onChange={() => handleToggleNewProject(proj)}
-                          className="rounded border-gray-300 text-enova-light focus:ring-enova-light mt-0.5"
-                        />
-                        <div className="flex flex-col">
-                          <span className="font-medium">{proj}</span>
-                          <span className="text-gray-400 text-xs mt-0.5">Will be added as: NC: {proj}</span>
+                      <div key={proj} className="flex flex-col md:flex-row md:items-center gap-3 bg-white px-3 py-2 rounded border border-yellow-100 hover:bg-yellow-50/50">
+                        <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer flex-1">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedNewProjects.includes(proj)}
+                            onChange={() => handleToggleNewProject(proj)}
+                            className="rounded border-gray-300 text-enova-light focus:ring-enova-light mt-0.5"
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-medium">{proj}</span>
+                            <span className="text-gray-400 text-xs mt-0.5">Will be added as: NC: {proj}</span>
+                          </div>
+                        </label>
+                        <div className="flex items-center gap-2">
+                          {generatedBrds[proj] ? (
+                            <a href={generatedBrds[proj]} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                              <span>📄 View BRD</span>
+                            </a>
+                          ) : (
+                            <button
+                              onClick={() => openBrdModal(proj)}
+                              className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
+                            >
+                              + Generate BRD
+                            </button>
+                          )}
                         </div>
-                      </label>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -369,6 +496,20 @@ function App() {
                   </tbody>
                 </table>
               </div>
+              
+              <div className="flex justify-end pt-4 border-t border-gray-100">
+                <button
+                  onClick={handleExport}
+                  disabled={loading || !isGoogleAuthed}
+                  className={`font-medium px-6 py-2 rounded-md transition-colors flex items-center gap-2 ${
+                    isGoogleAuthed 
+                      ? 'bg-green-600 hover:bg-green-700 text-white disabled:opacity-50' 
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {loading && exportStatus === null ? 'Exporting...' : 'Export to Sheets'}
+                </button>
+              </div>
             </div>
           )}
 
@@ -379,6 +520,173 @@ function App() {
           )}
         </main>
       </div>
+
+      {/* Sheet Picker Modal */}
+      {isSheetPickerOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h2 className="text-xl font-bold text-gray-800">Select Target Spreadsheet</h2>
+              <button onClick={() => setIsSheetPickerOpen(false)} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+              
+              {/* Option 1: Paste URL */}
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-700">Option 1: Paste URL or ID</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="https://docs.google.com/spreadsheets/d/..."
+                    value={manualSheetUrl}
+                    onChange={(e) => setManualSheetUrl(e.target.value)}
+                    className="border border-gray-300 rounded-md px-3 py-2 flex-1 text-sm focus:ring-2 focus:ring-enova-light focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => selectSheet(manualSheetUrl)}
+                    disabled={!manualSheetUrl}
+                    className="bg-enova-dark text-white hover:bg-enova-light px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+                  >
+                    Connect
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-gray-200"></div>
+                <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">OR</span>
+                <div className="flex-grow border-t border-gray-200"></div>
+              </div>
+
+              {/* Option 2: Recent Sheets */}
+              <div className="flex flex-col gap-3">
+                <label className="text-sm font-semibold text-gray-700">Option 2: Select a Recent Sheet</label>
+                {!isGoogleAuthed ? (
+                  <p className="text-sm text-red-500 bg-red-50 p-3 rounded border border-red-100">Please connect your Google Account first.</p>
+                ) : loadingRecent ? (
+                  <div className="py-8 text-center text-gray-500 animate-pulse">Loading recent files...</div>
+                ) : recentSheets.length === 0 ? (
+                  <div className="py-8 text-center text-gray-500 bg-gray-50 rounded border border-dashed border-gray-200">No recent spreadsheets found in your Drive.</div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {recentSheets.map(file => (
+                      <button
+                        key={file.id}
+                        onClick={() => selectSheet(file.id)}
+                        className="flex items-center gap-3 text-left bg-white px-4 py-3 rounded-lg border border-gray-200 hover:border-green-400 hover:bg-green-50/30 transition-all duration-200"
+                      >
+                        <img src={file.iconLink} alt="Sheet" className="w-5 h-5 opacity-80" />
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <span className="font-medium text-gray-800 truncate">{file.name}</span>
+                          <span className="text-xs text-gray-400">Edited {new Date(file.modifiedTime).toLocaleDateString()}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BRD Generation Modal */}
+      {brdModalProject && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">Generate BRD Document</h2>
+                <p className="text-sm text-gray-500">Project: {brdModalProject}</p>
+              </div>
+              <button onClick={closeBrdModal} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+              {brdMessage && (
+                <div className={`p-3 rounded-md text-sm ${
+                  brdMessage.type === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
+                  brdMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' :
+                  'bg-blue-50 text-blue-700 border border-blue-200'
+                }`}>
+                  {brdMessage.text}
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-semibold text-gray-700">1. Auto-Extract Data (Optional)</label>
+                <p className="text-xs text-gray-500">
+                  Paste URLs (Jira Epic, Google Docs) or raw text below. We will use AI to read them and auto-fill the variables.
+                </p>
+                <textarea
+                  rows="3"
+                  value={brdInputText}
+                  onChange={(e) => setBrdInputText(e.target.value)}
+                  placeholder="https://your-domain.atlassian.net/browse/PROJ-123&#10;https://docs.google.com/document/d/..."
+                  className="w-full border border-gray-300 rounded-md p-3 text-sm focus:ring-2 focus:ring-enova-light focus:outline-none"
+                />
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleAutoExtract}
+                    disabled={brdLoading || !brdInputText.trim()}
+                    className="bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200 px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+                  >
+                    ✨ Auto-Extract with AI
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label className="text-sm font-semibold text-gray-700">2. Template Variables</label>
+                {brdVariables.length === 0 && !brdLoading && (
+                  <p className="text-sm text-gray-500 italic">No variables `{'{{like_this}}'}` found in the template.</p>
+                )}
+                {brdVariables.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {brdVariables.map(v => (
+                      <div key={v} className="flex flex-col gap-1">
+                        <label className="text-xs font-medium text-gray-600">{v}</label>
+                        <input
+                          type="text"
+                          value={brdFormValues[v] || ''}
+                          onChange={(e) => setBrdFormValues(prev => ({ ...prev, [v]: e.target.value }))}
+                          className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-enova-light focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+              <button
+                type="button"
+                onClick={closeBrdModal}
+                className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerateBrd}
+                disabled={brdLoading}
+                className="px-4 py-2 bg-enova-dark text-white rounded-md hover:bg-enova-light transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                {brdLoading ? 'Processing...' : 'Create Document'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

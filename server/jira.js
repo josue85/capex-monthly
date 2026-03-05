@@ -189,4 +189,4 @@ async function fetchCapExData(projectKey, year, month, managerName) {
     }
 }
 
-module.exports = { fetchCapExData };
+module.exports = { fetchCapExData, getJiraClient };
