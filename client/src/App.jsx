@@ -24,6 +24,7 @@ function App() {
   const [brdInputText, setBrdInputText] = useState('');
   const [brdLoading, setBrdLoading] = useState(false);
   const [brdMessage, setBrdMessage] = useState(null);
+  const [hasExtracted, setHasExtracted] = useState(false);
 
   // Sheet Picker State
   const [isSheetPickerOpen, setIsSheetPickerOpen] = useState(false);
@@ -137,12 +138,43 @@ function App() {
     setBrdInputText('');
     setBrdMessage(null);
     setBrdLoading(true);
+    setHasExtracted(false);
 
     try {
       const res = await axios.post('/api/brd/template-variables', {});
       setBrdVariables(res.data.variables);
       const initialValues = {};
-      res.data.variables.forEach(v => initialValues[v] = '');
+      
+      const teamMapping = {
+        'CCR': 'Consumer Core',
+        'NCCYG': 'Cygnus',
+        'NCFE': 'Front End Team',
+        'NCLX': 'Lynx',
+        'NCOR': 'Orion',
+        'NCPG': 'Pegasus',
+        'NCPH': 'Phoenix',
+        'NCVG': 'Vega'
+      };
+      
+      res.data.variables.forEach(v => {
+        const vLower = v.toLowerCase();
+        // Heuristic to pre-fill Manager name (only for SE/Eng Manager, leave Product Manager for AI)
+        if (vLower.includes('se manager') || vLower.includes('engineering manager')) {
+          initialValues[v] = managerName;
+        } 
+        // Heuristic to pre-fill Project/Epic name
+        else if (vLower.includes('epic') || vLower.includes('project') || vLower.includes('name') || vLower.includes('title')) {
+          initialValues[v] = proj;
+        } 
+        // Heuristic to pre-fill Team name
+        else if (vLower.includes('team') || vLower.includes('group') || vLower.includes('squad')) {
+          initialValues[v] = teamMapping[projectKey] ? ('NC ' + teamMapping[projectKey]) : '';
+        }
+        // Default empty
+        else {
+          initialValues[v] = '';
+        }
+      });
       setBrdFormValues(initialValues);
     } catch (err) {
       setBrdMessage({ type: 'error', text: 'Failed to read template variables. ' + (err.response?.data?.error || err.message) });
@@ -167,10 +199,17 @@ function App() {
       });
       const extracted = res.data.extractedData;
       
-      setBrdFormValues(prev => ({
-        ...prev,
-        ...extracted
-      }));
+      setBrdFormValues(prev => {
+        const nextVals = { ...prev };
+        Object.keys(extracted).forEach(k => {
+          // Only overwrite if the current value is empty, so we don't wipe out heuristic pre-fills
+          if (extracted[k] && (!prev[k] || prev[k].trim() === '')) {
+            nextVals[k] = extracted[k];
+          }
+        });
+        return nextVals;
+      });
+      setHasExtracted(true);
       setBrdMessage({ type: 'success', text: 'Extraction complete! Please review the fields.' });
     } catch (err) {
       setBrdMessage({ type: 'error', text: 'Extraction failed. ' + (err.response?.data?.error || err.message) });
@@ -409,24 +448,32 @@ function App() {
                             className="rounded border-gray-300 text-enova-light focus:ring-enova-light mt-0.5"
                           />
                           <div className="flex flex-col">
-                            <span className="font-medium">{proj}</span>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <span className="font-medium">{proj}</span>
+                              {generatedBrds[proj] ? (
+                                <div className="flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded text-xs">
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                  <a href={generatedBrds[proj]} target="_blank" rel="noreferrer" className="font-medium hover:underline" onClick={(e) => e.stopPropagation()}>
+                                    View BRD
+                                  </a>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    openBrdModal(proj);
+                                  }}
+                                  className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors"
+                                >
+                                  + Create BRD
+                                </button>
+                              )}
+                            </div>
                             <span className="text-gray-400 text-xs mt-0.5">Will be added as: NC: {proj}</span>
                           </div>
                         </label>
-                        <div className="flex items-center gap-2">
-                          {generatedBrds[proj] ? (
-                            <a href={generatedBrds[proj]} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                              <span>📄 View BRD</span>
-                            </a>
-                          ) : (
-                            <button
-                              onClick={() => openBrdModal(proj)}
-                              className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
-                            >
-                              + Generate BRD
-                            </button>
-                          )}
-                        </div>
                       </div>
                     ))}
                   </div>
@@ -644,24 +691,63 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <label className="text-sm font-semibold text-gray-700">2. Template Variables</label>
-                {brdVariables.length === 0 && !brdLoading && (
-                  <p className="text-sm text-gray-500 italic">No variables `{'{{like_this}}'}` found in the template.</p>
-                )}
-                {brdVariables.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {brdVariables.map(v => (
-                      <div key={v} className="flex flex-col gap-1">
-                        <label className="text-xs font-medium text-gray-600">{v}</label>
-                        <input
-                          type="text"
-                          value={brdFormValues[v] || ''}
-                          onChange={(e) => setBrdFormValues(prev => ({ ...prev, [v]: e.target.value }))}
-                          className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-enova-light focus:outline-none"
-                        />
-                      </div>
-                    ))}
+              <div className="flex flex-col gap-3 relative">
+                <div className={`transition-opacity duration-300 ${!hasExtracted ? 'opacity-40 pointer-events-none' : ''}`}>
+                  <label className="text-sm font-semibold text-gray-700 block mb-3">2. Template Variables</label>
+                  {brdVariables.length === 0 && !brdLoading && (
+                    <p className="text-sm text-gray-500 italic">No variables `{'{{like_this}}'}` found in the template.</p>
+                  )}
+                  {brdVariables.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {brdVariables.map(v => {
+                        const vLower = v.toLowerCase();
+                      const isDateField = vLower.includes('date');
+                      const isLargeField = !isDateField && (vLower.includes('description') || vLower.includes('feature') || vLower.includes('goal') || vLower.includes('summary') || vLower.includes('update') || vLower.includes('detail') || vLower.includes('background') || vLower.includes('value') || vLower.includes('improvement') || vLower.includes('capabilit') || vLower.includes('business') || vLower.includes('case'));
+                      
+                      const isEmptyAfterExtraction = hasExtracted && (!brdFormValues[v] || brdFormValues[v].trim() === '');
+                      const highlightClass = isEmptyAfterExtraction ? 'border-orange-400 bg-orange-50 focus:ring-orange-400 focus:border-orange-400' : 'border-gray-300 focus:ring-enova-light focus:border-enova-light';
+                      
+                      return (
+                        <div key={v} className={`flex flex-col gap-1 ${isLargeField ? 'md:col-span-2' : ''}`}>
+                          <label className="text-xs font-medium text-gray-600">
+                            {v} {isEmptyAfterExtraction && <span className="text-orange-500 font-bold ml-1">* Needs Review</span>}
+                          </label>
+                          {isLargeField ? (
+                            <textarea
+                              rows="4"
+                              value={brdFormValues[v] || ''}
+                              onChange={(e) => setBrdFormValues(prev => ({ ...prev, [v]: e.target.value }))}
+                              className={`border rounded-md px-3 py-2 text-sm focus:ring-2 focus:outline-none resize-y ${highlightClass}`}
+                            />
+                          ) : isDateField ? (
+                            <input
+                              type="date"
+                              value={brdFormValues[v] || ''}
+                              onChange={(e) => setBrdFormValues(prev => ({ ...prev, [v]: e.target.value }))}
+                              className={`border rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:outline-none ${highlightClass}`}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={brdFormValues[v] || ''}
+                              onChange={(e) => setBrdFormValues(prev => ({ ...prev, [v]: e.target.value }))}
+                              className={`border rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:outline-none ${highlightClass}`}
+                            />
+                          )}
+                        </div>
+                      );
+                      })}
+                    </div>
+                  )}
+                </div>
+                {!hasExtracted && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                    <button 
+                      onClick={() => setHasExtracted(true)}
+                      className="pointer-events-auto bg-white/90 px-4 py-2 rounded-full shadow-sm border border-gray-200 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors backdrop-blur-sm"
+                    >
+                      Skip AI & Fill Manually
+                    </button>
                   </div>
                 )}
               </div>

@@ -25,38 +25,45 @@ async function getTemplateVariables(documentUrl) {
         const variables = new Set();
         const regex = /\{\{([^}]+)\}\}/g;
 
-        // Traverse the document content
-        if (doc.body && doc.body.content) {
-            for (const structuralElement of doc.body.content) {
+        // Helper to extract text from a structural element list (like body.content, header.content)
+        const extractTextFromContent = (content) => {
+            if (!content) return;
+            for (const structuralElement of content) {
                 if (structuralElement.paragraph) {
+                    let paragraphText = '';
                     for (const element of structuralElement.paragraph.elements) {
                         if (element.textRun && element.textRun.content) {
-                            const text = element.textRun.content;
-                            let match;
-                            while ((match = regex.exec(text)) !== null) {
-                                variables.add(match[1].trim());
-                            }
+                            paragraphText += element.textRun.content;
                         }
+                    }
+                    let match;
+                    while ((match = regex.exec(paragraphText)) !== null) {
+                        variables.add(match[1].trim());
                     }
                 } else if (structuralElement.table) {
                     for (const row of structuralElement.table.tableRows) {
                         for (const cell of row.tableCells) {
-                            for (const cellContent of cell.content) {
-                                if (cellContent.paragraph) {
-                                    for (const element of cellContent.paragraph.elements) {
-                                        if (element.textRun && element.textRun.content) {
-                                            const text = element.textRun.content;
-                                            let match;
-                                            while ((match = regex.exec(text)) !== null) {
-                                                variables.add(match[1].trim());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            extractTextFromContent(cell.content);
                         }
                     }
                 }
+            }
+        };
+
+        // Traverse the document content
+        if (doc.body && doc.body.content) {
+            extractTextFromContent(doc.body.content);
+        }
+        
+        // Traverse headers and footers
+        if (doc.headers) {
+            for (const headerId of Object.keys(doc.headers)) {
+                extractTextFromContent(doc.headers[headerId].content);
+            }
+        }
+        if (doc.footers) {
+            for (const footerId of Object.keys(doc.footers)) {
+                extractTextFromContent(doc.footers[footerId].content);
             }
         }
 

@@ -21,11 +21,22 @@ async function extractGoogleDocText(url) {
     if (!auth) throw new Error("Google API authentication not configured");
 
     const docs = google.docs({ version: 'v1', auth });
+    const drive = google.drive({ version: 'v3', auth });
     
     try {
+        let ownerName = 'Unknown';
+        try {
+            const fileMeta = await drive.files.get({ fileId: documentId, fields: 'owners' });
+            if (fileMeta.data.owners && fileMeta.data.owners.length > 0) {
+                ownerName = fileMeta.data.owners[0].displayName;
+            }
+        } catch (e) {
+            console.warn('Could not fetch document owner:', e.message);
+        }
+
         const response = await docs.documents.get({ documentId });
         const doc = response.data;
-        let text = '';
+        let text = `[Document Owner: ${ownerName}]\n\n`;
 
         if (doc.body && doc.body.content) {
             for (const structuralElement of doc.body.content) {
@@ -54,9 +65,10 @@ async function extractJiraText(url) {
 
     try {
         const client = getJiraClient();
-        const response = await client.get(`/issue/${issueKey}?fields=summary,description`);
+        const response = await client.get(`/issue/${issueKey}?fields=summary,description,creator`);
         
         const summary = response.data.fields.summary || '';
+        const creator = response.data.fields.creator?.displayName || response.data.fields.creator?.name || '';
         let description = '';
         
         // Jira API v3 uses Atlassian Document Format (ADF) for description
@@ -78,7 +90,7 @@ async function extractJiraText(url) {
             description = descField; // Fallback if v2 API or plain string
         }
         
-        return `Jira Summary: ${summary}\nJira Description: ${description}`;
+        return `Jira Summary: ${summary}\nJira Creator: ${creator}\nJira Description: ${description}`;
     } catch (err) {
         console.error(`Error reading Jira issue ${issueKey}:`, err.message);
         return `[Could not read Jira issue: ${err.message}]`;
@@ -144,6 +156,11 @@ I will also provide a list of variables.
 
 Your task is to analyze the context text and extract the most appropriate value for each variable.
 If a variable's information cannot be found or inferred from the text, return an empty string for that variable.
+
+Important clues to consider:
+1. The Product Manager is likely the person who created the Jira Epic (listed as Jira Creator).
+2. If a Statement of Work (SoW) Google Doc is provided, its "Document Owner" is likely to be the "Technical PIC".
+
 Output the result strictly as a valid JSON object where the keys are the variable names. Do not include markdown formatting like \`\`\`json.
 
 Variables to extract:
