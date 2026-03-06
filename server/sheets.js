@@ -217,7 +217,7 @@ async function appendNewProjects(newProjects, managerName, spreadsheetId, brdUrl
             managerName || "Manager, Name", // B
             projectName,         // C
             docUrl,              // D (BRD Link)
-            "TRUE",              // E (Checkbox)
+            true,                // E (Checkbox) - pass boolean true instead of string "TRUE"
             "In Progress",       // F
             "",                  // G
             "",                  // H
