@@ -2,6 +2,54 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const PERCENT_FIELDS = [
+  { key: 'Design', label: 'Design' },
+  { key: 'Development', label: 'Dev' },
+  { key: 'QA', label: 'QA' },
+  { key: 'Training', label: 'Training' },
+  { key: 'ProjectManagement', label: 'Proj Mgmt' },
+  { key: 'ProjectOversight', label: 'Oversight' },
+];
+
+const createPreviewRow = (row, index) => ({
+  ...row,
+  _rowId: `${row.Person}-${row.Project}-${index}`,
+  _excluded: row.Project === 'No Epic',
+  _sortIndex: index,
+});
+
+const getPercentInputValue = (value) => {
+  const parsed = Number.parseInt(String(value).replace('%', ''), 10);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const formatPercentForStorage = (value) => {
+  const parsed = Number.parseInt(String(value), 10);
+  const safeValue = Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : 0;
+  return `${safeValue}%`;
+};
+
+const stripPreviewRowMetadata = (row) => {
+  const sanitizedRow = { ...row };
+  delete sanitizedRow._rowId;
+  delete sanitizedRow._excluded;
+  delete sanitizedRow._sortIndex;
+  return sanitizedRow;
+};
+
+const sortPreviewRows = (rows) => [...rows].sort((left, right) => {
+  const personComparison = left.Person.localeCompare(right.Person);
+  if (personComparison !== 0) return personComparison;
+
+  if (left.Project === 'No Epic' && right.Project !== 'No Epic') return -1;
+  if (left.Project !== 'No Epic' && right.Project === 'No Epic') return 1;
+
+  const projectComparison = left.Project.localeCompare(right.Project);
+  if (projectComparison !== 0) return projectComparison;
+
+  return left._sortIndex - right._sortIndex;
+});
+
 function App() {
   const [projectKey, setProjectKey] = useState('');
   const [month, setMonth] = useState('');
@@ -64,9 +112,14 @@ function App() {
     try {
       const response = await axios.post('/api/sheet/info', { spreadsheetId: idOrUrl });
       setSpreadsheetInfo(response.data);
+      setError(null);
     } catch (err) {
       console.error("Failed to fetch sheet info", err);
       setSpreadsheetInfo(null);
+      if (err.response?.status === 401) {
+        setIsGoogleAuthed(false);
+      }
+      setError(err.response?.data?.error || 'Failed to fetch spreadsheet info');
     } finally {
       setSheetLoading(false);
     }
@@ -86,8 +139,9 @@ function App() {
         managerName,
         spreadsheetId: spreadsheetInput
       });
-      setData(response.data);
+      setData(response.data.map(createPreviewRow));
       setSelectedNewProjects([]); // Reset on new preview
+      setGeneratedBrds({});
     } catch (err) {
       setError(err.response?.data?.error || err.message);
     } finally {
@@ -97,13 +151,29 @@ function App() {
 
   const handleExport = async () => {
     if (!data) return;
+
+    const exportRows = data
+      .filter(row => !row._excluded)
+      .map(stripPreviewRowMetadata);
+
+    if (exportRows.length === 0) {
+      setError('Select at least one preview row to export.');
+      setExportStatus('error');
+      return;
+    }
+
     setLoading(true);
     setExportStatus(null);
-    
+    setError(null);
+     
     try {
+      const exportProjects = selectedNewProjects.filter(proj =>
+        exportRows.some(row => row.Project === proj)
+      );
+
       await axios.post('/api/capex/export', { 
-        rows: data,
-        newProjects: selectedNewProjects,
+        rows: exportRows,
+        newProjects: exportProjects,
         managerName,
         spreadsheetId: spreadsheetInput,
         brdUrls: generatedBrds
@@ -119,11 +189,37 @@ function App() {
     }
   };
 
-  const unmatchedProjects = data ? Array.from(new Set(
-    data
+  const handleRowPercentChange = (rowId, field, value) => {
+    setData(prev => prev ? prev.map(row =>
+      row._rowId === rowId
+        ? { ...row, [field]: formatPercentForStorage(value) }
+        : row
+    ) : prev);
+    setExportStatus(null);
+  };
+
+  const handleToggleRowExport = (rowId) => {
+    setData(prev => prev ? prev.map(row =>
+      row._rowId === rowId
+        ? { ...row, _excluded: !row._excluded }
+        : row
+    ) : prev);
+    setExportStatus(null);
+  };
+
+  const handleSetAllRowsExport = (shouldInclude) => {
+    setData(prev => prev ? prev.map(row => ({ ...row, _excluded: !shouldInclude })) : prev);
+    setExportStatus(null);
+  };
+
+  const exportableRows = data ? data.filter(row => !row._excluded) : [];
+  const sortedPreviewRows = data ? sortPreviewRows(data) : [];
+
+  const unmatchedProjects = exportableRows.length > 0 ? Array.from(new Set(
+    exportableRows
       .filter(row => row.Project !== 'No Epic' && !row.Project.startsWith('NC:'))
       .map(row => row.Project)
-  )) : [];
+  )).sort((left, right) => left.localeCompare(right)) : [];
 
   const handleToggleNewProject = (proj) => {
     setSelectedNewProjects(prev => 
@@ -258,6 +354,10 @@ function App() {
       setRecentSheets(res.data.files || []);
     } catch (err) {
       console.error('Failed to load recent sheets', err);
+      if (err.response?.status === 401) {
+        setIsGoogleAuthed(false);
+        setError(err.response?.data?.error || 'Google authentication expired. Please reconnect your Google account.');
+      }
     } finally {
       setLoadingRecent(false);
     }
@@ -481,30 +581,57 @@ function App() {
               )}
 
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800">Preview ({data.length} rows)</h2>
-                
-                <div className="flex flex-col items-end gap-1">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800">Preview ({sortedPreviewRows.length} rows)</h2>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Edit percentages inline, keep <span className="font-medium">{exportableRows.length}</span> rows selected for export, and uncheck any rows you want to skip.
+                  </p>
+                </div>
+                 
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSetAllRowsExport(true)}
+                      disabled={!data || data.length === 0}
+                      className="px-3 py-1.5 text-xs font-medium rounded-md border border-gray-300 text-gray-600 hover:border-enova-light hover:text-enova-light disabled:opacity-50"
+                    >
+                      Include All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSetAllRowsExport(false)}
+                      disabled={!data || data.length === 0}
+                      className="px-3 py-1.5 text-xs font-medium rounded-md border border-gray-300 text-gray-600 hover:border-enova-light hover:text-enova-light disabled:opacity-50"
+                    >
+                      Exclude All
+                    </button>
+                  </div>
                   <button
                     onClick={handleExport}
-                    disabled={loading || !isGoogleAuthed}
+                    disabled={loading || !isGoogleAuthed || exportableRows.length === 0}
                     className={`font-medium px-6 py-2 rounded-md transition-colors flex items-center gap-2 ${
-                      isGoogleAuthed 
+                      isGoogleAuthed && exportableRows.length > 0
                         ? 'bg-green-600 hover:bg-green-700 text-white disabled:opacity-50' 
                         : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    {loading && exportStatus === null ? 'Exporting...' : 'Export to Sheets'}
+                    {loading && exportStatus === null ? 'Exporting...' : `Export ${exportableRows.length} Row${exportableRows.length === 1 ? '' : 's'} to Sheets`}
                   </button>
                   {!isGoogleAuthed && (
                     <span className="text-xs text-red-500">Please connect Google Sheets first</span>
                   )}
+                  {isGoogleAuthed && exportableRows.length === 0 && (
+                    <span className="text-xs text-red-500">Select at least one row to export</span>
+                  )}
                 </div>
               </div>
-              
+               
               <div className="overflow-x-auto border border-gray-200 rounded-lg">
                 <table className="w-full text-left text-sm text-gray-600">
                   <thead className="bg-enova-dark text-white uppercase text-xs tracking-wider border-b border-gray-200">
                     <tr>
+                      <th className="px-4 py-3 min-w-[80px]">Export</th>
                       <th className="px-4 py-3 min-w-[150px]">Person</th>
                       <th className="px-4 py-3 min-w-[200px]">Project (Fuzzy Matched)</th>
                       <th className="px-4 py-3">Design</th>
@@ -516,10 +643,26 @@ function App() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {data.map((row, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
+                    {sortedPreviewRows.map((row) => (
+                      <tr
+                        key={row._rowId}
+                        className={row._excluded ? 'bg-gray-50 text-gray-400' : 'hover:bg-gray-50'}
+                      >
                         <td className="px-4 py-3">
-                          <span className="font-medium text-gray-900">{row.Person}</span>
+                          <label className="inline-flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={!row._excluded}
+                              onChange={() => handleToggleRowExport(row._rowId)}
+                              className="rounded border-gray-300 text-enova-light focus:ring-enova-light"
+                            />
+                            <span className="text-xs font-medium text-gray-500">
+                              {row._excluded ? 'Skip' : 'Export'}
+                            </span>
+                          </label>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`font-medium ${row._excluded ? 'text-gray-400' : 'text-gray-900'}`}>{row.Person}</span>
                           {row.OriginalPerson && row.OriginalPerson !== row.Person && (
                             <div className="text-xs text-gray-400 mt-1">Orig: {row.OriginalPerson}</div>
                           )}
@@ -532,12 +675,23 @@ function App() {
                             <div className="text-xs text-gray-400 mt-1">Orig: {row.OriginalEpic}</div>
                           )}
                         </td>
-                        <td className="px-4 py-3">{row.Design}</td>
-                        <td className="px-4 py-3">{row.Development}</td>
-                        <td className="px-4 py-3">{row.QA}</td>
-                        <td className="px-4 py-3">{row.Training}</td>
-                        <td className="px-4 py-3">{row.ProjectManagement}</td>
-                        <td className="px-4 py-3">{row.ProjectOversight}</td>
+                        {PERCENT_FIELDS.map(({ key }) => (
+                          <td key={key} className="px-4 py-3">
+                            <div className="flex items-center gap-1">
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="1"
+                                value={getPercentInputValue(row[key])}
+                                onChange={(e) => handleRowPercentChange(row._rowId, key, e.target.value)}
+                                disabled={row._excluded}
+                                className="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm text-right focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none disabled:bg-gray-100 disabled:text-gray-400"
+                              />
+                              <span className="text-gray-500">%</span>
+                            </div>
+                          </td>
+                        ))}
                       </tr>
                     ))}
                   </tbody>
@@ -547,14 +701,14 @@ function App() {
               <div className="flex justify-end pt-4 border-t border-gray-100">
                 <button
                   onClick={handleExport}
-                  disabled={loading || !isGoogleAuthed}
+                  disabled={loading || !isGoogleAuthed || exportableRows.length === 0}
                   className={`font-medium px-6 py-2 rounded-md transition-colors flex items-center gap-2 ${
-                    isGoogleAuthed 
+                    isGoogleAuthed && exportableRows.length > 0
                       ? 'bg-green-600 hover:bg-green-700 text-white disabled:opacity-50' 
                       : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   }`}
                 >
-                  {loading && exportStatus === null ? 'Exporting...' : 'Export to Sheets'}
+                  {loading && exportStatus === null ? 'Exporting...' : `Export ${exportableRows.length} Row${exportableRows.length === 1 ? '' : 's'} to Sheets`}
                 </button>
               </div>
             </div>
@@ -562,7 +716,7 @@ function App() {
 
           {data && data.length === 0 && (
             <div className="text-center py-12 text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-              No completed issues found for this project and month.
+              No matching issues found for this project and month.
             </div>
           )}
         </main>

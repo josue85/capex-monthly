@@ -12,6 +12,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function getBaseUrl(req) {
+    if (process.env.APP_BASE_URL) {
+        return process.env.APP_BASE_URL;
+    }
+
+    const host = req.get('host');
+    if (!host) {
+        return `${req.protocol}://localhost:8080`;
+    }
+
+    const normalizedHost = host.replace(/^127\.0\.0\.1(?=[:]|$)/, 'localhost');
+    return `${req.protocol}://${normalizedHost}`;
+}
+
 // --- Google OAuth Routes ---
 
 app.get('/api/auth/status', async (req, res) => {
@@ -21,7 +35,8 @@ app.get('/api/auth/status', async (req, res) => {
 
 app.get('/api/auth/google', async (req, res) => {
     try {
-        const url = await getAuthUrl();
+        const redirectUri = `${getBaseUrl(req)}/api/auth/google/callback`;
+        const url = await getAuthUrl(redirectUri);
         res.redirect(url);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -35,7 +50,8 @@ app.get('/api/auth/google/callback', async (req, res) => {
     }
     
     try {
-        await handleAuthCallback(code);
+        const redirectUri = `${getBaseUrl(req)}/api/auth/google/callback`;
+        await handleAuthCallback(code, redirectUri);
         // Redirect back to frontend
         res.redirect('/');
     } catch (error) {
@@ -65,7 +81,7 @@ app.post('/api/sheet/info', async (req, res) => {
         res.json(info);
     } catch (error) {
         console.error('Sheet info error:', error);
-        res.status(500).json({ error: error.message || 'Failed to fetch spreadsheet info' });
+        res.status(error.status || 500).json({ error: error.message || 'Failed to fetch spreadsheet info' });
     }
 });
 
@@ -78,7 +94,7 @@ app.get('/api/sheets/recent', async (req, res) => {
         res.json({ files });
     } catch (error) {
         console.error('Recent sheets error:', error);
-        res.status(500).json({ error: error.message || 'Failed to fetch recent sheets' });
+        res.status(error.status || 500).json({ error: error.message || 'Failed to fetch recent sheets' });
     }
 });
 
@@ -178,9 +194,11 @@ app.post('/api/capex/export', async (req, res) => {
                 }
                 return row;
             });
-            await appendCapExData(updatedRows, finalSheetId);
+            const exportRows = updatedRows.filter(row => row.Project !== 'No Epic');
+            await appendCapExData(exportRows, finalSheetId);
         } else {
-            await appendCapExData(rows, finalSheetId);
+            const exportRows = rows.filter(row => row.Project !== 'No Epic');
+            await appendCapExData(exportRows, finalSheetId);
         }
         
         res.json({ success: true, message: 'Successfully exported to Google Sheets' });

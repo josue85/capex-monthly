@@ -7,20 +7,41 @@ require('dotenv').config();
 // Remove hardcoded SPREADSHEET_ID
 const TOKEN_PATH = path.join(__dirname, 'token.json');
 
-function getOAuth2Client() {
+function createHttpError(status, message) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
+}
+
+function isInvalidGrantError(error) {
+    return error?.message?.includes('invalid_grant') ||
+        error?.response?.data?.error === 'invalid_grant';
+}
+
+async function clearStoredToken() {
+    try {
+        await fs.unlink(TOKEN_PATH);
+    } catch (error) {
+        if (error.code !== 'ENOENT') {
+            throw error;
+        }
+    }
+}
+
+function getOAuth2Client(redirectUri) {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.OAUTH_REDIRECT_URI || 'http://localhost:3000/api/auth/google/callback';
+    const finalRedirectUri = redirectUri || process.env.OAUTH_REDIRECT_URI || 'http://localhost:8080/api/auth/google/callback';
     
     if (!clientId || !clientSecret) {
         throw new Error('Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in .env');
     }
     
-    return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+    return new google.auth.OAuth2(clientId, clientSecret, finalRedirectUri);
 }
 
-async function getAuthUrl() {
-    const oAuth2Client = getOAuth2Client();
+async function getAuthUrl(redirectUri) {
+    const oAuth2Client = getOAuth2Client(redirectUri);
     return oAuth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: [
@@ -32,8 +53,8 @@ async function getAuthUrl() {
     });
 }
 
-async function handleAuthCallback(code) {
-    const oAuth2Client = getOAuth2Client();
+async function handleAuthCallback(code, redirectUri) {
+    const oAuth2Client = getOAuth2Client(redirectUri);
     const { tokens } = await oAuth2Client.getToken(code);
     await fs.writeFile(TOKEN_PATH, JSON.stringify(tokens));
     return tokens;
@@ -41,9 +62,10 @@ async function handleAuthCallback(code) {
 
 async function checkAuthStatus() {
     try {
-        await fs.access(TOKEN_PATH);
-        return true;
+        const auth = await getAuth();
+        return Boolean(auth);
     } catch (error) {
+        console.error('Error checking Google auth status:', error.message);
         return false;
     }
 }
@@ -53,10 +75,22 @@ async function getAuth() {
     try {
         const token = await fs.readFile(TOKEN_PATH);
         oAuth2Client.setCredentials(JSON.parse(token));
+        await oAuth2Client.getAccessToken();
         return oAuth2Client;
     } catch (err) {
+        if (err.code === 'ENOENT') {
+            console.warn('Google OAuth token not found. User needs to authenticate.');
+            return null;
+        }
+
+        if (isInvalidGrantError(err)) {
+            await clearStoredToken();
+            console.warn('Stored Google OAuth token expired or was revoked. User needs to authenticate again.');
+            return null;
+        }
+
         console.warn('Google OAuth token not found. User needs to authenticate.');
-        return null;
+        throw err;
     }
 }
 
@@ -182,14 +216,31 @@ async function appendCapExData(rows, spreadsheetId) {
     ]);
 
     try {
-        await sheets.spreadsheets.values.append({
-            spreadsheetId: spreadsheetId,
-            range: 'NetCredit!B:B', // Target B:B so it accurately finds the bottom of the existing list (since A is now empty)
-            valueInputOption: 'USER_ENTERED', 
-            insertDataOption: 'INSERT_ROWS', // Force it to insert rows correctly
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId,
+            range: 'NetCredit!B:B',
+        });
+
+        const existingRows = response.data.values || [];
+        let lastRowIndex = existingRows.length;
+        while (
+            lastRowIndex > 0 &&
+            (!existingRows[lastRowIndex - 1] ||
+                !existingRows[lastRowIndex - 1][0] ||
+                existingRows[lastRowIndex - 1][0].trim() === '')
+        ) {
+            lastRowIndex--;
+        }
+
+        const insertRow = lastRowIndex > 0 ? lastRowIndex + 2 : 1;
+
+        await sheets.spreadsheets.values.update({
+            spreadsheetId,
+            range: `NetCredit!A${insertRow}:J${insertRow + values.length - 1}`,
+            valueInputOption: 'USER_ENTERED',
             requestBody: {
                 majorDimension: 'ROWS',
-                values: values
+                values
             }
         });
         return { success: true };
@@ -262,7 +313,7 @@ async function appendNewProjects(newProjects, managerName, spreadsheetId, brdUrl
 
 async function getSpreadsheetInfo(spreadsheetId) {
     const auth = await getAuth();
-    if (!auth) throw new Error("Google Sheets authentication not configured");
+    if (!auth) throw createHttpError(401, 'Google authentication expired. Please reconnect your Google account.');
     const sheets = google.sheets({ version: 'v4', auth });
     
     try {
@@ -275,13 +326,17 @@ async function getSpreadsheetInfo(spreadsheetId) {
         };
     } catch (error) {
         console.error('Error fetching spreadsheet info:', error.message);
+        if (isInvalidGrantError(error)) {
+            await clearStoredToken();
+            throw createHttpError(401, 'Google authentication expired. Please reconnect your Google account.');
+        }
         throw new Error('Failed to access spreadsheet. Please check the ID/URL and your permissions.');
     }
 }
 
 async function getRecentSpreadsheets() {
     const auth = await getAuth();
-    if (!auth) throw new Error("Google API authentication not configured");
+    if (!auth) throw createHttpError(401, 'Google authentication expired. Please reconnect your Google account.');
 
     const drive = google.drive({ version: 'v3', auth });
     try {
@@ -294,6 +349,10 @@ async function getRecentSpreadsheets() {
         return response.data.files || [];
     } catch (error) {
         console.error('Error fetching recent spreadsheets:', error.message);
+        if (isInvalidGrantError(error)) {
+            await clearStoredToken();
+            throw createHttpError(401, 'Google authentication expired. Please reconnect your Google account.');
+        }
         throw new Error('Failed to fetch recent spreadsheets.');
     }
 }
