@@ -37,6 +37,11 @@ const stripPreviewRowMetadata = (row) => {
   return sanitizedRow;
 };
 
+const getRowTotalPercent = (row) => PERCENT_FIELDS.reduce(
+  (sum, { key }) => sum + getPercentInputValue(row[key]),
+  0
+);
+
 const sortPreviewRows = (rows) => [...rows].sort((left, right) => {
   const personComparison = left.Person.localeCompare(right.Person);
   if (personComparison !== 0) return personComparison;
@@ -214,6 +219,10 @@ function App() {
 
   const exportableRows = data ? data.filter(row => !row._excluded) : [];
   const sortedPreviewRows = data ? sortPreviewRows(data) : [];
+  const personSelectedTotals = exportableRows.reduce((totals, row) => {
+    totals[row.Person] = (totals[row.Person] || 0) + getRowTotalPercent(row);
+    return totals;
+  }, {});
 
   const unmatchedProjects = exportableRows.length > 0 ? Array.from(new Set(
     exportableRows
@@ -627,19 +636,19 @@ function App() {
                 </div>
               </div>
                
-              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+              <div className="max-h-[70vh] overflow-auto border border-gray-200 rounded-lg">
                 <table className="w-full text-left text-sm text-gray-600">
                   <thead className="bg-enova-dark text-white uppercase text-xs tracking-wider border-b border-gray-200">
                     <tr>
-                      <th className="px-4 py-3 min-w-[80px]">Export</th>
-                      <th className="px-4 py-3 min-w-[150px]">Person</th>
-                      <th className="px-4 py-3 min-w-[200px]">Project (Fuzzy Matched)</th>
-                      <th className="px-4 py-3">Design</th>
-                      <th className="px-4 py-3">Dev</th>
-                      <th className="px-4 py-3">QA</th>
-                      <th className="px-4 py-3">Training</th>
-                      <th className="px-4 py-3">Proj Mgmt</th>
-                      <th className="px-4 py-3">Oversight</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3 min-w-[80px]">Export</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3 min-w-[150px]">Person</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3 min-w-[200px]">Project (Fuzzy Matched)</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3">Design</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3">Dev</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3">QA</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3">Training</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3">Proj Mgmt</th>
+                      <th className="sticky top-0 z-10 bg-enova-dark px-4 py-3">Oversight</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
@@ -662,7 +671,22 @@ function App() {
                           </label>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`font-medium ${row._excluded ? 'text-gray-400' : 'text-gray-900'}`}>{row.Person}</span>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`font-medium ${row._excluded ? 'text-gray-400' : 'text-gray-900'}`}>
+                                {row.Person}
+                              </span>
+                              <span
+                                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold border ${
+                                  (personSelectedTotals[row.Person] || 0) >= 80
+                                    ? 'bg-green-50 text-green-700 border-green-200'
+                                    : 'bg-red-50 text-red-700 border-red-200'
+                                }`}
+                              >
+                                Total: {personSelectedTotals[row.Person] || 0}%
+                              </span>
+                            </div>
+                          </div>
                           {row.OriginalPerson && row.OriginalPerson !== row.Person && (
                             <div className="text-xs text-gray-400 mt-1">Orig: {row.OriginalPerson}</div>
                           )}
@@ -682,9 +706,11 @@ function App() {
                                 type="number"
                                 min="0"
                                 max="100"
-                                step="1"
+                                step="5"
                                 value={getPercentInputValue(row[key])}
                                 onChange={(e) => handleRowPercentChange(row._rowId, key, e.target.value)}
+                                onFocus={(e) => e.target.select()}
+                                onClick={(e) => e.target.select()}
                                 disabled={row._excluded}
                                 className="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm text-right focus:ring-2 focus:ring-enova-light focus:border-enova-light focus:outline-none disabled:bg-gray-100 disabled:text-gray-400"
                               />
